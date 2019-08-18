@@ -1424,13 +1424,6 @@ HookReturnCode ClientSay2( SayParameters@ pParams ) {
 	bool strTest = false;
 
 	strTest = (str.Find("DIFF") != String::INVALID_INDEX);
-	strTest = strTest || (str.Find("HARD") != String::INVALID_INDEX);
-	strTest = strTest || (str.Find("EASY") != String::INVALID_INDEX);
-	strTest = strTest || (str.Find("REGEN") != String::INVALID_INDEX);
-	strTest = strTest || (str.Find("MAXHEALTH") != String::INVALID_INDEX);
-	strTest = strTest || (str.Find("IMPOSSIBLE") != String::INVALID_INDEX);
-	strTest = strTest || (str.Find("INVINCIBLE") != String::INVALID_INDEX);
-	strTest = strTest || (str.Find("POWERFUL") != String::INVALID_INDEX);
 	strTest = strTest && (g_diffy.m_flMessageTime < g_Engine.time);
 	
 	if (strTest) {
