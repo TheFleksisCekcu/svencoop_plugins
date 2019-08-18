@@ -37,7 +37,7 @@ void MapInit() {
       g_Game.PrecacheGeneric( "models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + ".mdl" );
     }
 
-    if ( pFileT !is null && pFile.IsOpen() ) {
+    if ( pFileT !is null && pFileT.IsOpen() ) {
       pFileT.Close();
       g_Game.PrecacheGeneric( "models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + "t.mdl" );
     }
