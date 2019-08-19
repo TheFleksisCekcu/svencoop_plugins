@@ -1439,7 +1439,8 @@ HookReturnCode ClientSay2( SayParameters@ pParams ){
 HookReturnCode PlayerKilled( CBasePlayer@ pPlayer, CBaseEntity@, int iGib ){
 	if (g_diffy.getDiff() == 1.0 && !((pPlayer.pev.health < -40 && iGib != GIB_NEVER) || iGib == GIB_ALWAYS)) {
 		pPlayer.GibMonster();
-		g_EntityFuncs.Remove(pPlayer);
+		pPlayer.pev.deadflag = DEAD_DEAD;
+		pPlayer.pev.effects |= EF_NODRAW;
 	}
 
 	return HOOK_CONTINUE;
