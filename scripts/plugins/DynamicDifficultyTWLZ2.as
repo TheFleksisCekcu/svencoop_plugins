@@ -1,11 +1,4 @@
-string hostname;
-
 final class Diffy {
-	int getDiff() {
-		int difficultInt = int(m_fl_difficulty*1000.0+0.5);
-
-		return difficultInt;
-	}
 
 	private array<double> diffPerPeep = {
 			0.700, //0
@@ -249,7 +242,7 @@ final class Diffy {
 			{ 0.5, 2.5, 5.0, 10.0, 10.0, 50.0, 2500.0, 2500.0 }, // sk_headcrab_dmg_bite 22
 			{ 5.0, 25.0, 50.0, 50.0, 100.0, 150.0, 200.0, 200.0 }, // sk_hgrunt_health 23
 			{ 0.5, 2.5, 5.0, 10.0, 12.0, 60.0, 1200.0, 1200.0 }, // sk_hgrunt_kick 24
-			{ 1.0, 2.0, 3.0, 5.0, 7.0, 15.0, 50.0, 50.0 }, // sk_hgrunt_pellets 25
+			{ 1.0, 2.0, 3.0, 5.0, 7.0, 15.0, 20.0, 25.0 }, // sk_hgrunt_pellets 25
 			{ 100.0, 200.0, 400.0, 600.0, 800.0, 1200.0, 1600.0, 2000.0 }, // sk_hgrunt_gspeed 26
 			{ 2.0, 10.0, 20.0, 30.0, 60.0, 90.0, 120.0 , 120.0 }, // sk_houndeye_health 27
 			{ 1.0, 5.0, 10.0, 13.0, 15.0, 75.0, 1500.0, 10000.0 }, // sk_houndeye_dmg_blast 28
@@ -316,7 +309,7 @@ final class Diffy {
 			{ 0.15, 0.75, 1.5, 2.0, 3.0, 15.0, 300.0, 3000.0 }, // sk_babygargantua_dmg_fire 89
 			{ 2.5, 12.5, 25.0, 50.0, 60.0, 300.0, 6000.0, 10000.0 }, // sk_babygargantua_dmg_stomp 90
 			{ 15.0, 75.0, 150.0, 200.0, 250.0, 375.0, 500.0, 500.0 }, // sk_hwgrunt_health 91
-			{ 0.08, 0.4, 0.8, 1.0, 1.2, 6.0, 7.0, 8.0 }, // sk_hwgrunt_minipellets
+			{ 0.08, 0.4, 0.8, 1.0, 1.2, 3.0, 4.0, 5.0 }, // sk_hwgrunt_minipellets
 			{ 8.0, 40.0, 80.0, 100.0, 125.0, 150.0, 200.0 , 12500.0 }, // sk_rgrunt_explode 93
 			{ 2.5, 12.5, 25.0, 40.0, 50.0, 250.0, 5000.0, 50000.0 }, // sk_massassin_sniper 94
 			{ 65.0, 65.0, 65.0, 65.0, 65.0, 75.0, 80.0, 100.0 }, // sk_otis_health 95
@@ -486,7 +479,7 @@ final class Diffy {
 						g_PlayerDiffData_LastIsAlive[ iPlayer-1 ] = true;
 					}else{
 						if(g_PlayerDiffData_LastIsAlive[ iPlayer-1 ]){
-							if(m_fl_difficulty == 1.0) pPlayer.Killed(pPlayer.pev, GIB_ALWAYS);
+							//if(m_fl_difficulty == 1.0) pPlayer.Killed(pPlayer.pev, GIB_ALWAYS);
 							g_PlayerDiffData_LastIsAlive[ iPlayer-1 ] = false;
 						}
 					}
@@ -1351,31 +1344,37 @@ final class Diffy {
 	string getMessage(){
 		return s_message;
 	}
+
+	double getDiff() {
+		return m_fl_difficulty;
+	}
 }
 
 Diffy@ g_diffy;
 array<bool> g_PlayerDiffData_LastIsAlive;
+string hostname;
 
-// CClientCommand g_DiffCommand("diff", "Sets the Difficulty (0.0 - 100.0)", @manipulate_difficulty, ConCommandFlag::AdminOnly);
+CClientCommand g_DiffCommand("diff", "Sets the Difficulty (0.0 - 100.0)", @manipulate_difficulty, ConCommandFlag::AdminOnly);
 
-// void manipulate_difficulty(const CCommand@ pArguments){
-	// if(pArguments.ArgC() < 1) return;
+void manipulate_difficulty(const CCommand@ pArguments){
+	if(pArguments.ArgC() < 1) return;
 	
-	// string aStr = pArguments.Arg(1);
-	// if(aStr == "") return;
+	string aStr = pArguments.Arg(1);
+	if(aStr == "") return;
 	
-	// double newDiff = atod(aStr);
+	double newDiff = atod(aStr);
 	
-	// g_diffy.setDifficulty(newDiff/100.0, false, 1);
-// }
+	g_diffy.setDifficulty(newDiff/100.0, false, 1);
+}
 
-void PluginInit() {
+void PluginInit(){
 	g_Module.ScriptInfo.SetAuthor( "CubeMath" );
 	g_Module.ScriptInfo.SetContactInfo( "steamcommunity.com/id/CubeMath" );
 	
 	g_Hooks.RegisterHook( Hooks::Player::ClientPutInServer, @ClientPutInServer );
 	g_Hooks.RegisterHook( Hooks::Player::ClientDisconnect, @ClientDisconnect );
 	g_Hooks.RegisterHook( Hooks::Player::ClientSay, @ClientSay2 );
+	g_Hooks.RegisterHook( Hooks::Player::PlayerKilled, @PlayerKilled );
 	
 	g_PlayerDiffData_LastIsAlive.resize( g_Engine.maxClients );
 
@@ -1392,7 +1391,7 @@ void PluginInit() {
 	g_diffy.mapStartDiffy();
 }
 
-void MapInit() {
+void MapInit(){
 }
 
 void MapActivate(){
@@ -1418,7 +1417,7 @@ HookReturnCode ClientDisconnect( CBasePlayer@ pPlayer ){
 	return HOOK_CONTINUE;
 }
 
-HookReturnCode ClientSay2( SayParameters@ pParams ) {
+HookReturnCode ClientSay2( SayParameters@ pParams ){
 	string str = pParams.GetCommand();
 	str.ToUppercase();
 	bool strTest = false;
@@ -1436,8 +1435,19 @@ HookReturnCode ClientSay2( SayParameters@ pParams ) {
 	return HOOK_CONTINUE;
 }
 
-void AppendHostname() {
-	int difficultInt = g_diffy.getDiff();
+// better way to handle gibbing than dying twice at 100% diff
+HookReturnCode PlayerKilled( CBasePlayer@ pPlayer, CBaseEntity@, int iGib ){
+	if (g_diffy.getDiff() == 1.0 && !((pPlayer.pev.health < -40 && iGib != GIB_NEVER) || iGib == GIB_ALWAYS)) {
+		pPlayer.GibMonster();
+		g_EntityFuncs.Remove(pPlayer);
+	}
+
+	return HOOK_CONTINUE;
+}
+
+// put the diff value in the hostname
+void AppendHostname(){
+        int difficultInt = int(g_diffy.getDiff()*1000.0+0.5);
 
 	if (difficultInt > 700) {
 		string dStr = "" + string(difficultInt/10) + "." + string(difficultInt%10) + "%";
@@ -1446,7 +1456,8 @@ void AppendHostname() {
 	}
 }
 
-void OverrideMapCfg() {
+// allow gaussjumping
+void OverrideMapCfg(){
 	g_EngineFuncs.ServerCommand("mp_disablegaussjump 0\n");
 	g_EngineFuncs.ServerExecute();
 }
