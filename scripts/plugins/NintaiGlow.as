@@ -46,7 +46,7 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
     // 引数
     const CCommand@ pArguments = pParams.GetArguments();
     if (pArguments.ArgC() == 2) {
-        if ((pArguments.Arg(0) == "nintai") || (pArguments.Arg(0) == "glow")) {
+        if ((pArguments.Arg(0) == "glow") || (pArguments.Arg(0) == "glow")) {
             // プレイヤー情報取得
             CBasePlayer@ pPlayer = pParams.GetPlayer();
             if (pPlayer !is null) {
@@ -75,9 +75,10 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
                     pPlayer.pev.rendercolor = getGlowColor(g_playerDeathCount[playerIndex]);
                 }
             }
+            return HOOK_HANDLED;
         }
     }
-	return HOOK_CONTINUE;
+    return HOOK_CONTINUE;
 }
 
 // プレイヤー参加時
@@ -97,7 +98,7 @@ void playerSpawnDelay(int &in playerIndex) {
         
         // プレイヤーへ通知
         if (g_playerDeathCount[playerIndex] == 50) {
-            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "は最高に光っている!! (glowing maximum!!) LV MAX....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
+            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "は最高に光っている!! (glowing maximum!!) LV MAX....(^^;)b ｶｺｲｲ");
             
             // 7色発光スタート
             if (!g_colorRotActive) {
@@ -106,22 +107,22 @@ void playerSpawnDelay(int &in playerIndex) {
             }
             
         } else if (g_playerDeathCount[playerIndex] == 40) {
-            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV6....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
+            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (glowing more!!) LV6....(^^;)b ｶｺｲｲ");
             
         } else if (g_playerDeathCount[playerIndex] == 35) {
-            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV5....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
+            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (glowing more!!) LV5....(^^;)b ｶｺｲｲ");
             
         } else if (g_playerDeathCount[playerIndex] == 30) {
-            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV4....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
+            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (glowing more!!) LV4....(^^;)b ｶｺｲｲ");
             
         } else if (g_playerDeathCount[playerIndex] == 25) {
-            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV3....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
+            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (glowing more!!) LV3....(^^;)b ｶｺｲｲ");
             
         } else if (g_playerDeathCount[playerIndex] == 20) {
-            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV2....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
+            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (glowing more!!) LV2....(^^;)b ｶｺｲｲ");
             
         } else if (g_playerDeathCount[playerIndex] == 15) {
-            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "は光っている!! (now glowing!!) ....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
+            g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "は光っている!! (now glowing!!) ....(^^;)b ｶｺｲｲ");
         }
        
         // プレイヤーを光らせる
