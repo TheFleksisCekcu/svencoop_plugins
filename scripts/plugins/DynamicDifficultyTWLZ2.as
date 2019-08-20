@@ -20,7 +20,7 @@ final class Diffy {
 			0.970, //16
 			0.980, //17
 			0.990, //18
-			0.999, //19
+			0.995, //19
 			0.999, //20
 			1.000, //21
 			1.000, //22
@@ -1323,9 +1323,9 @@ final class Diffy {
 		
 		if(m_Fails > 0){
 			if(d == 1.0){
-				d = d - double(m_Fails-1)*0.1 - 0.001;
+				d = d - double(m_Fails-1)*0.05 - 0.001;
 			}else{
-				d = d - double(m_Fails-0)*0.1;
+				d = d - double(m_Fails-0)*0.05;
 			}
 			mode = 2;
 		}

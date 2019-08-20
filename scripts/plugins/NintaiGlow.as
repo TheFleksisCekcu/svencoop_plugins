@@ -46,7 +46,7 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
     // 引数
     const CCommand@ pArguments = pParams.GetArguments();
     if (pArguments.ArgC() == 2) {
-        if ((pArguments.Arg(0) == "!nintai") || (pArguments.Arg(0) == "!glow")) {
+        if ((pArguments.Arg(0) == "nintai") || (pArguments.Arg(0) == "glow")) {
             // プレイヤー情報取得
             CBasePlayer@ pPlayer = pParams.GetPlayer();
             if (pPlayer !is null) {
@@ -96,7 +96,7 @@ void playerSpawnDelay(int &in playerIndex) {
     if ((pPlayer !is null) && (pPlayer.IsConnected()) && (g_playerGlowEnable[playerIndex])) {
         
         // プレイヤーへ通知
-        if (g_playerDeathCount[playerIndex] == 100) {
+        if (g_playerDeathCount[playerIndex] == 50) {
             g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "は最高に光っている!! (glowing maximum!!) LV MAX....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
             
             // 7色発光スタート
@@ -105,22 +105,22 @@ void playerSpawnDelay(int &in playerIndex) {
                 g_colorRotActive = true;
             }
             
-        } else if (g_playerDeathCount[playerIndex] == 90) {
+        } else if (g_playerDeathCount[playerIndex] == 40) {
             g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV6....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
             
-        } else if (g_playerDeathCount[playerIndex] == 80) {
+        } else if (g_playerDeathCount[playerIndex] == 35) {
             g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV5....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
             
-        } else if (g_playerDeathCount[playerIndex] == 70) {
+        } else if (g_playerDeathCount[playerIndex] == 30) {
             g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV4....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
             
-        } else if (g_playerDeathCount[playerIndex] == 60) {
+        } else if (g_playerDeathCount[playerIndex] == 25) {
             g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV3....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
             
-        } else if (g_playerDeathCount[playerIndex] == 50) {
+        } else if (g_playerDeathCount[playerIndex] == 20) {
             g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "はさらに光っている!! (more glowing!!) LV2....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
             
-        } else if (g_playerDeathCount[playerIndex] == 40) {
+        } else if (g_playerDeathCount[playerIndex] == 15) {
             g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "" + pPlayer.pev.netname + "は光っている!! (now glowing!!) ....(^^;)b ｶｺｲｲ (※disable -> type '!glow off')");
         }
        
@@ -137,25 +137,25 @@ Vector getGlowColor(int &in deathCount) {
     Vector color = Vector(0, 0, 0);
     
     // ターコイズ
-    if (deathCount >= 100) {
+    if (deathCount >= 50) {
         color = Vector(0, 255, 200);
     // グリーン
-    } else if (deathCount >= 90) {
+    } else if (deathCount >= 40) {
         color = Vector(0, 255, 0);
     // ライム
-    } else if (deathCount >= 80) {
+    } else if (deathCount >= 35) {
         color = Vector(128, 255, 0);
     // 黄色
-    } else if (deathCount >= 70) {
+    } else if (deathCount >= 30) {
         color = Vector(255, 255, 0);
     // オレンジ
-    } else if (deathCount >= 60) {
+    } else if (deathCount >= 25) {
         color = Vector(255, 128, 0);
     // 赤
-    } else if (deathCount >= 50) {
+    } else if (deathCount >= 20) {
         color = Vector(255, 0, 0);
     // 白
-    } else if (deathCount >= 40) {
+    } else if (deathCount >= 15) {
         color = Vector(255, 255, 255);
     }
     return color;
@@ -173,7 +173,7 @@ void colorRotation() {
     for (uint i = 1; i < g_playerDeathCount.length(); i++) {
         @pPlayer = g_PlayerFuncs.FindPlayerByIndex(i);
         if ((pPlayer !is null) && (pPlayer.IsConnected())
-            && (g_playerDeathCount[i] >= 100)) {
+            && (g_playerDeathCount[i] >= 50)) {
                 
             r = Math.RandomLong(0, 255);
             g = Math.RandomLong(0, 255);
