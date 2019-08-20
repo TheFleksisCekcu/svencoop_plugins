@@ -46,7 +46,7 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
     // 引数
     const CCommand@ pArguments = pParams.GetArguments();
     if (pArguments.ArgC() == 2) {
-        if ((pArguments.Arg(0) == "glow") || (pArguments.Arg(0) == "glow")) {
+        if ((pArguments.Arg(0) == "glow") || (pArguments.Arg(0) == "!glow")) {
             // プレイヤー情報取得
             CBasePlayer@ pPlayer = pParams.GetPlayer();
             if (pPlayer !is null) {
