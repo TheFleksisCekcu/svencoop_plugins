@@ -282,7 +282,7 @@ HookReturnCode PlayerKilled (CBasePlayer@ pPlayer, CBaseEntity@ pEntity, int par
     // 全体死亡数を加算
     g_totalDeathCount++;
     string msg;
-    if ((g_totalDeathCount % 100) == 0) {
+    if ((g_totalDeathCount % 300) == 0) {
         msg = "[祝]: Total " + g_totalDeathCount + " death達成!! (Congrats!!)  ....(^^;)v ﾅｲｽ";
         g_Scheduler.SetTimeout("messageDelayAll", 3.0f, msg );
     }

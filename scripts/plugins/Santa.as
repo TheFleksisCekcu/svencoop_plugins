@@ -1,3 +1,5 @@
+// todo: handgrenade: checl for g_SurvivalMode.IsActive()
+
 // settings
 const bool g_togglesolid        = true;
 const bool g_replaceitemmodels  = true;
@@ -19,8 +21,9 @@ const array<string> g_MapBlacklist = {
 'bossbattle',
 'ctf_warforts',
 'road_to_shinnen',
-'rust_island_b5',
-'rust_islands_b6',
+'rust_islands_b7',
+'rust_legacy_b7',
+'rust_mini_b8',
 'shitty_pubg',
 'th_escape'
 };

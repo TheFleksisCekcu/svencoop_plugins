@@ -29,17 +29,25 @@ HookReturnCode ClientPutInServer( CBasePlayer@ pPlayer ) {
 
 void MapInit() {
   for ( uint i = 0; i < g_ModelList.length(); i++ ) {
-    File@ pFile  = g_FileSystem.OpenFile( "scripts/plugins/store/playermodelfolder/" + g_ModelList[i] + "/" + g_ModelList[i] + ".mdl",  OpenFile::READ );
-    File@ pFileT = g_FileSystem.OpenFile( "scripts/plugins/store/playermodelfolder/" + g_ModelList[i] + "/" + g_ModelList[i] + "t.mdl", OpenFile::READ );
+    File@ pFile = g_FileSystem.OpenFile( "scripts/plugins/store/playermodelfolder/" + g_ModelList[i] + "/" + g_ModelList[i] + ".mdl", OpenFile::READ );
 
     if ( pFile !is null && pFile.IsOpen() ) {
       pFile.Close();
       g_Game.PrecacheGeneric( "models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + ".mdl" );
     }
 
+    File@ pFileT = g_FileSystem.OpenFile( "scripts/plugins/store/playermodelfolder/" + g_ModelList[i] + "/" + g_ModelList[i] + "t.mdl", OpenFile::READ );
+
     if ( pFileT !is null && pFileT.IsOpen() ) {
       pFileT.Close();
       g_Game.PrecacheGeneric( "models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + "t.mdl" );
+    }
+
+    File@ pFileP = g_FileSystem.OpenFile( "scripts/plugins/store/playermodelfolder/" + g_ModelList[i] + "/" + g_ModelList[i] + ".bmp", OpenFile::READ );
+
+    if ( pFileP !is null && pFileP.IsOpen() ) {
+      pFileP.Close();
+      g_Game.PrecacheGeneric( "models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + ".bmp" );
     }
   }
 
