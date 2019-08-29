@@ -63,7 +63,7 @@ int plyDataSize;
 
 void PluginInit(){
 	g_Module.ScriptInfo.SetAuthor("DeepBlueSea");
-	g_Module.ScriptInfo.SetContactInfo("irc://irc.rizon.net/#/dev/null");
+	g_Module.ScriptInfo.SetContactInfo("https://discord.gg/qfZxWAd");
   
 	plyDataSize = 0;
 	g_PlayerData.resize( plyDataSize );

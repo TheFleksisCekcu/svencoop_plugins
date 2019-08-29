@@ -18,7 +18,7 @@ CClientCommand g_CSPitch("cspitch", "Sets the pitch at which your ChatSounds pla
 
 void PluginInit() {
   g_Module.ScriptInfo.SetAuthor("incognico");
-  g_Module.ScriptInfo.SetContactInfo("irc://irc.rizon.net/#/dev/null");
+  g_Module.ScriptInfo.SetContactInfo("https://discord.gg/qfZxWAd");
 
   g_Hooks.RegisterHook(Hooks::Player::ClientSay, @ClientSay);
   g_Hooks.RegisterHook(Hooks::Player::ClientDisconnect, @ClientDisconnect);

@@ -5,7 +5,7 @@ CClientCommand g_MapChangeMenu("mapchangemenu", "Displays the map change menu (a
 
 void PluginInit() {
   g_Module.ScriptInfo.SetAuthor("incognico");
-  g_Module.ScriptInfo.SetContactInfo("irc://irc.rizon.net/#/dev/null");
+  g_Module.ScriptInfo.SetContactInfo("https://discord.gg/qfZxWAd");
   g_Module.ScriptInfo.SetMinimumAdminLevel(ADMIN_YES);
 }
 

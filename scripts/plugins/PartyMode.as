@@ -18,7 +18,7 @@ CScheduledFunction@ g_pThinkFunc = null;
 
 void PluginInit() {
   g_Module.ScriptInfo.SetAuthor("incognico");
-  g_Module.ScriptInfo.SetContactInfo("irc://irc.rizon.net/#/dev/null");
+  g_Module.ScriptInfo.SetContactInfo("https://discord.gg/qfZxWAd");
 
   g_Hooks.RegisterHook(Hooks::Game::MapChange, @MapChange);
   g_Hooks.RegisterHook(Hooks::Player::ClientSay, @ClientSay);

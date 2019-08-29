@@ -8,7 +8,7 @@ const string g_KeyIdleOrg = "$v_idleorg";
 void PluginInit()
 {
 	g_Module.ScriptInfo.SetAuthor("DeepBlueSea");
-	g_Module.ScriptInfo.SetContactInfo("irc://irc.rizon.net/#/dev/null");
+	g_Module.ScriptInfo.SetContactInfo("https://discord.gg/qfZxWAd");
 
 	@g_pMaxIdleTime = CCVar("maxidletime", 300, "maximum idle time before players get kicked for being afk (in seconds)", ConCommandFlag::AdminOnly);
 

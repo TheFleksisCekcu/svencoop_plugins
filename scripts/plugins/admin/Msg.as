@@ -5,7 +5,7 @@ CScheduledFunction@ g_pThinkFunc = null;
 
 void PluginInit() {
   g_Module.ScriptInfo.SetAuthor("incognico");
-  g_Module.ScriptInfo.SetContactInfo("irc://irc.rizon.net/#/dev/null");
+  g_Module.ScriptInfo.SetContactInfo("https://discord.gg/qfZxWAd");
   g_Module.ScriptInfo.SetMinimumAdminLevel(ADMIN_YES);
   
   @g_Msg      = CCVar("msg", "Welcome to the twilightzone!", "The text to display", ConCommandFlag::AdminOnly);
