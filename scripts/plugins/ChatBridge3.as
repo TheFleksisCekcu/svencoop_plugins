@@ -3,13 +3,12 @@
 const string g_FromSven = "scripts/plugins/store/_fromsven.txt";
 const string g_ToSven   = "scripts/plugins/store/_tosven.txt";
 const float delay       = 1.75f; // flush this often (sec.), don't set too low
-const float statusdelay = 3.0f; // wait this long after map change before writing status line
 //////////
 
 File@ f_FromSven;
 File@ f_ToSven;
-CScheduledFunction@ sf_LinkChat    = null;
-CScheduledFunction@ sf_StatusTimer = null;
+CScheduledFunction@ sf_LinkChat = null;
+bool lock = true;
 int oldCount = 0;
 dictionary ips;
 
@@ -32,15 +31,13 @@ void MapStart() {
   if ( sf_LinkChat is null )
     @sf_LinkChat = g_Scheduler.SetInterval( "ChatLink", delay );
 
-  if ( sf_StatusTimer !is null )
-    g_Scheduler.RemoveTimer( sf_StatusTimer );
+  g_Scheduler.SetTimeout( "ServerStatus", delay + 1 );
+  g_Scheduler.SetTimeout( "Unlock", 5.0f );
+}
 
-  if ( g_Engine.mapname == "_server_start" ) {
-    ServerStatus();
-  }
-  else {
-    @sf_StatusTimer = g_Scheduler.SetTimeout( "ServerStatus", statusdelay );
-  }
+void Unlock() {
+  lock = false;
+  g_PlayerFuncs.ClientPrintAll( HUD_PRINTTALK, "[Info] In-game chat is now linked to Discord.\n" );
 }
 
 void ServerStatus() {
@@ -52,7 +49,9 @@ void ServerStatus() {
 
 void ChatLink() {
   FlushFromSven();
-  FlushToSven();
+
+  if ( !lock )
+    FlushToSven();
 }
 
 void FlushFromSven() {
@@ -109,6 +108,7 @@ void AppendFromSven( string append ) {
 
 HookReturnCode MapChange() {
   oldCount = g_PlayerFuncs.GetNumPlayers();
+  lock = true;
 
   return HOOK_CONTINUE;
 }
@@ -155,8 +155,6 @@ HookReturnCode ClientDisconnect( CBasePlayer@ pPlayer ) {
 
 HookReturnCode ClientConnected( edict_t@, const string& in szPlayerName, const string& in szIPAddress, bool& out, string& out ) {
   ips[szPlayerName] = szIPAddress;
-
- // g_EngineFuncs.ServerPrint( "[>>>] " + szIPAddress + "\n" );
 
   return HOOK_CONTINUE;
 }

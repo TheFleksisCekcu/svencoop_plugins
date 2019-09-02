@@ -444,8 +444,6 @@ final class Diffy {
 	}
 	
 	void diffyThink(){
-		//m_oldEngineTime = g_Engine.time;
-		
 		double betweenTime = g_Engine.time - m_oldEngineTime;
 		
 		if(betweenTime < 0.0){
@@ -479,7 +477,6 @@ final class Diffy {
 						g_PlayerDiffData_LastIsAlive[ iPlayer-1 ] = true;
 					}else{
 						if(g_PlayerDiffData_LastIsAlive[ iPlayer-1 ]){
-							//if(m_fl_difficulty == 1.0) pPlayer.Killed(pPlayer.pev, GIB_ALWAYS);
 							g_PlayerDiffData_LastIsAlive[ iPlayer-1 ] = false;
 						}
 					}
@@ -489,7 +486,7 @@ final class Diffy {
 			m_oldEngineTime += betweenTime;
 		}
 		
-		g_Scheduler.SetTimeout( @this, "diffyThink", 0.05);
+		g_Scheduler.SetTimeout( @this, "diffyThink", 0.25);
 	}
 	
 	double getSkValue(int indexo){

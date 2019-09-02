@@ -3,7 +3,7 @@ void PluginInit()
 	g_Module.ScriptInfo.SetAuthor( "Nero" );
 	g_Module.ScriptInfo.SetContactInfo( "Nero @ Svencoop forums" );
 
-	@AmmoRegen::g_flRechargeRate = CCVar( "ar_rate", 14.0f, "Rate of regen-ticks. (default: 1.0)", ConCommandFlag::AdminOnly );
+	@AmmoRegen::g_flRechargeRate = CCVar( "ar_rate", 15.0f, "Rate of regen-ticks. (default: 1.0)", ConCommandFlag::AdminOnly );
 	@AmmoRegen::g_iRechargeAmount = CCVar( "ar_amount", 5, "Amount of ammo to give. (default: 5)", ConCommandFlag::AdminOnly );
 }
 
@@ -55,23 +55,23 @@ array<string> g_DisabledMaps =
 {
 	"crklf_*",
 	"cracklife_*",
-	"th_*",
-	"hl_*",
-	"ba_*",
+//	"th_*",
+//	"hl_*",
+//	"ba_*",
 	"rust_*",
 	"ops_*",
-	"of*"
+//	"of*"
 };
 
 const dictionary pAmmoValues =
 {
-	{ "buckshot", 3 },
+	{ "buckshot", 2 },
 	{ "health", 0 },
 	{ "556", 0 },
 	{ "m40a1", 0 },
 	{ "argrenades", 0 },
 	{ "357", 0 },
-	{ "9mm", 17 },
+	{ "9mm", 9 },
 	{ "sporeclip", 0 },
 	{ "uranium", 0 },
 	{ "rockets", 0 },

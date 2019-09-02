@@ -7,7 +7,7 @@ const array<string> g_AdditionalModelList = {
 };
 
 const array<string> g_ClimateChangeModelList = {
-'greta'
+'greta_thunberg'
 };
 
 const array<string> g_CrashModelList = {

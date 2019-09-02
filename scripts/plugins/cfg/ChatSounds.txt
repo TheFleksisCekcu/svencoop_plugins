@@ -1,5 +1,6 @@
 ! rautek/chinkthieves/attn.mp3
 !! spasmflutorion/spasmflutorion_shot.wav
+5grad rautek/ash/hq_5_grad_haben_wir_5_ne_6.ogg
 ? ramubestmodel/question.mp3
 @997 rautek/ash/mq_at_997.ogg
 a ramubestmodel/a.mp3
@@ -29,7 +30,6 @@ boo w00tguy/botrace/boo.wav
 buttslut rautek/oof/buttslut.ogg
 cheeer tur/cheer.wav
 cheer tfc/ambience/goal_1.wav
-cookie rautek/oof/cookie.ogg
 cry rautek/chinkthieves/cry.ogg
 daijobu biru/daijobu.ogg
 daredesu biru/daredesu.ogg
@@ -44,7 +44,6 @@ ethan rautek/nigsnspics/ethan.ogg
 fail rautek/misc/fail.ogg
 feil ramubestmodel/feil.mp3
 ffs! rautek/max/ffs.ogg
-fickdich rautek/oof/fickdich.ogg
 fuckmytits rautek/oof/fuckmytits.ogg
 fuckoff rautek/max/fuckoff.ogg
 gaben rautek/gus/gaben.ogg
@@ -59,10 +58,8 @@ haha rautek/misc/haha.ogg
 hahaha mommamesa/weirdlaugh1.wav
 hahash rautek/ash/mq_hahahaha_hahahahaha.ogg
 hai rautek/staging/hai.ogg
-haoah ramubestmodel/haoah.wav
 hay rautek/nigsnspics/hay.ogg
 helloladies scientist/helloladies.wav
-henlo rautek/oof/henlo.ogg
 hentai biru/hentai.ogg
 hey barney/c1a4_ba_octo3.wav
 heystop barney/donthurtem.wav
@@ -134,7 +131,6 @@ party rautek/nico/party.ogg
 perhaps rautek/max/perhaps.ogg
 piano rautek/ash/hq_piano_piano.ogg
 poiii rautek/chinkthieves/poiii.mp3
-pupu biru/pupu.ogg
 ready? ramubestmodel/ready_.mp3
 readygo ramubestmodel/readygo.mp3
 sadviolin rautek/nigsnspics/sadviolin.ogg
@@ -158,6 +154,7 @@ tuturu biru/tuturu.ogg
 twg rautek/foley/twg.ogg
 ue rautek/oof/ue.ogg
 uguu rautek/chinkthieves/uguu.mp3
+uh rautek/oof/uh.ogg
 uhh rautek/misc/uhh.mp3
 unu rautek/oof/unu.ogg
 unyaa rautek/chinkthieves/unyaa.mp3
