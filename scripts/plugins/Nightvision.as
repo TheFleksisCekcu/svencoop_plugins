@@ -2,7 +2,7 @@
 CScheduledFunction@ g_pNVThinkFunc = null;
 dictionary g_PlayerNV;
 const Vector NV_COLOR( 0, 255, 0 );
-const int g_iRadius = 40;
+const int g_iRadius = 42;
 const int iDecay = 1;
 const int iLife	= 2;
 const int iBrightness = 64;
@@ -19,7 +19,7 @@ void PluginInit()
 	if( g_pNVThinkFunc !is null )
 		g_Scheduler.RemoveTimer( g_pNVThinkFunc );
 
-	@g_pNVThinkFunc = g_Scheduler.SetInterval( "nvThink", 0.1f );
+	@g_pNVThinkFunc = g_Scheduler.SetInterval( "nvThink", 0.05f );
 }
 
 CClientCommand nightvision( "nightvision", "Toggles night vision on/off", @ToggleNV );
@@ -55,7 +55,7 @@ void ToggleNV( const CCommand@ args )
 				data.nvColor = Vector(0, 255, 0);
 				g_PlayerNV[szSteamId] = data;
 				g_PlayerFuncs.ScreenFade( pPlayer, NV_COLOR, 0.01, 0.5, iBrightness, FFADE_OUT | FFADE_STAYOUT);
-				g_SoundSystem.EmitSoundDyn( pPlayer.edict(), CHAN_WEAPON, "player/hud_nightvision.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				g_SoundSystem.EmitSoundDyn( pPlayer.edict(), CHAN_WEAPON, "player/hud_nightvision.wav", 0.8, ATTN_NORM, 0, PITCH_NORM );
 			}
 		}
 	

@@ -1,11 +1,11 @@
 final class Diffy {
 
 	private array<double> diffPerPeep = {
-			0.700, //0
-			0.700, //1
-			0.725, //2
-			0.750, //3
-			0.775, //4
+			0.600, //0
+			0.600, //1
+			0.650, //2
+			0.700, //3
+			0.750, //4
 			0.800, //5
 			0.825, //6
 			0.850, //7
@@ -22,7 +22,7 @@ final class Diffy {
 			0.990, //18
 			0.995, //19
 			0.999, //20
-			1.000, //21
+			0.999, //21
 			1.000, //22
 			1.000, //23
 			1.000, //24
@@ -486,7 +486,7 @@ final class Diffy {
 			m_oldEngineTime += betweenTime;
 		}
 		
-		g_Scheduler.SetTimeout( @this, "diffyThink", 0.25);
+		g_Scheduler.SetTimeout( @this, "diffyThink", 0.15);
 	}
 	
 	double getSkValue(int indexo){

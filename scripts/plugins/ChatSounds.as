@@ -1,6 +1,6 @@
 const string g_SoundFile = "scripts/plugins/cfg/ChatSounds.txt";
 
-const uint g_BaseDelay = 8000;
+const uint g_BaseDelay = 6666;
 uint g_Delay = g_BaseDelay;
 
 const string g_MalfunctionSound = 'parallax/message.wav';
@@ -141,7 +141,7 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
           //pPlayer.ShowOverheadSprite(Math.RandomLong(0, 1) == 0 ? g_SpriteName : g_SpriteName2, 56.0f, 2.25f);
           pPlayer.ShowOverheadSprite(g_SpriteName2, 56.0f, 2.25f);
 
-          if (pPlayer.IsAlive() && !g_SurvivalMode.IsActive() && Math.RandomLong(0, 32) == 0) {
+          if (pPlayer.IsAlive() && !g_SurvivalMode.IsActive() && Math.RandomLong(0, 42) == 0) {
             pPlayer.TakeDamage(g_EntityFuncs.Instance(0).pev, g_EntityFuncs.Instance(0).pev, 9999.9f, DMG_SHOCK);
             g_PlayerFuncs.SayText(pPlayer, "[ChatSounds] Error: System Malfunction.\n");
             g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_AUTO, g_MalfunctionSound, 1.0f, 0.75f, 0, 100, 0, true, pPlayer.pev.origin);
@@ -176,12 +176,12 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
 }
 
 HookReturnCode ClientPutInServer(CBasePlayer@ pPlayer) {
-   g_Delay = g_Delay + 800;
+   g_Delay = g_Delay + 600;
    return HOOK_CONTINUE;
 }
 
 HookReturnCode ClientDisconnect(CBasePlayer@ pPlayer) {
-   g_Delay = g_Delay - 800;
+   g_Delay = g_Delay - 600;
    return HOOK_CONTINUE;
 }
 
