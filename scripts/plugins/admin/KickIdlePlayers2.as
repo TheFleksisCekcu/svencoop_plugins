@@ -3,7 +3,7 @@ CScheduledFunction@ g_pIdleTestFunc = null;
 const string g_KeyIdleTime = "$i_idletime";
 const string g_KeyIdleAFKSign = "$i_afk_sign";
 const string g_KeyIdleOrg = "$v_idleorg";
-const int g_maxplayersAFK = 29;
+const int g_maxplayersAFK = 28;
 const int g_maxTotalKick = 599;
 
 

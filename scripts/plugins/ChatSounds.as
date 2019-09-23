@@ -138,8 +138,7 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
           g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_AUTO, string(g_SoundList[soundArg]), 1.0f, 0.2f, 0, Math.RandomLong(50, 175), 0, true, pPlayer.pev.origin);
         }
         else {
-          //pPlayer.ShowOverheadSprite(Math.RandomLong(0, 1) == 0 ? g_SpriteName : g_SpriteName2, 56.0f, 2.25f);
-          pPlayer.ShowOverheadSprite(g_SpriteName2, 56.0f, 2.25f);
+          pPlayer.ShowOverheadSprite(Math.RandomLong(0, 1) == 0 ? g_SpriteName : g_SpriteName2, 56.0f, 2.25f);
 
           if (pPlayer.IsAlive() && !g_SurvivalMode.IsActive() && Math.RandomLong(0, 42) == 0) {
             pPlayer.TakeDamage(g_EntityFuncs.Instance(0).pev, g_EntityFuncs.Instance(0).pev, 9999.9f, DMG_SHOCK);
