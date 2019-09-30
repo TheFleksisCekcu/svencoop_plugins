@@ -11,7 +11,13 @@ const array<string> g_ClimateChangeModelList = {
 };
 
 const array<string> g_CrashModelList = {
+'apacheshit',
 'axis2_s5',
+'big_mom',
+'garg',
+'gargantua',
+'owatarobo',
+'owatarobo_s',
 'tomb_raider'
 };
 

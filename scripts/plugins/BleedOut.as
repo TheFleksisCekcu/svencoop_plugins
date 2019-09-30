@@ -162,8 +162,8 @@ void BleedThink()
 						else
 							pPlayer.pev.maxspeed = PLAYER_MOD_MOVESPEED_CRITICAL;
 						
-						g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_STATIC, "aomdc/misc/breathe1.wav", 0.50f, 1.0f, 0, 100);
-						g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_STREAM, "aomdc/misc/breathe2.wav", 0.65f, 1.0f, 0, 100, pPlayer.entindex());
+						g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_STATIC, "AoMDC/misc/breathe1.wav", 0.50f, 1.0f, 0, 100);
+						g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_STREAM, "AoMDC/misc/breathe2.wav", 0.65f, 1.0f, 0, 100, pPlayer.entindex());
 						
 
 						g_PlayerFuncs.ScreenFade(pPlayer, Vector(120, 0, 0), PLAYER_MOD_BLEEDTICK_INJURED, 2.412, 220, FFADE_MODULATE | FFADE_IN);
@@ -209,7 +209,7 @@ void BleedThink()
 							pState.reportState = 1;
 						}
 						
-						g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_STATIC, "aomdc/misc/breathe1.wav", 0.50f, 1.0f, 0, 100);
+						g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_STATIC, "AoMDC/misc/breathe1.wav", 0.50f, 1.0f, 0, 100);
 						
 						if(pPlayer.pev.flags & FL_DUCKING != 0) // Player is ducking. Speed them up a bit
 							pPlayer.pev.maxspeed = 235;
@@ -257,8 +257,8 @@ void PluginInit()
 
 void MapInit()
 {
-	g_SoundSystem.PrecacheSound("aomdc/misc/breathe1.wav");
-	g_SoundSystem.PrecacheSound("aomdc/misc/breathe2.wav");
+	g_SoundSystem.PrecacheSound("AoMDC/misc/breathe1.wav");
+	g_SoundSystem.PrecacheSound("AoMDC/misc/breathe2.wav");
 	
 	if(BLEED_ALLOWED.find(g_Engine.mapname) >= 0)
 		@interval = g_Scheduler.SetInterval("BleedThink", 2.412, -1);

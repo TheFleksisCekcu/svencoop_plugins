@@ -75,8 +75,11 @@ dictionary g_talkers; // all the voice data
 array<Phrase@> g_all_phrases; // for straight-forward precaching, duplicates the data in g_talkers
 array<string> g_talkers_ordered; // used to display talkers/voices in the correct order
 array<CommandGroup@> g_commands; // all of em
-string command_menu_1_title = "Actions:";
-string command_menu_2_title = "Responses:";
+array<string> command_menu_titles;
+string command_menu_1_title;
+string command_menu_2_title;
+string command_menu_3_title;
+string command_menu_4_title;
 array<EHandle> g_players;
 
 CCVar@ g_enable_gain;
@@ -86,6 +89,7 @@ CCVar@ g_command_delay;
 CCVar@ g_debug_mode;
 CCVar@ g_enable_global;
 CCVar@ g_falloff;
+CCVar@ g_use_sentences;
 
 dictionary player_states; // persistent-ish player data, organized by steam-id or username if on a LAN server, values are @PlayerState
 bool debug_log = false;
@@ -105,8 +109,9 @@ void PluginInit()
 	g_Hooks.RegisterHook( Hooks::Player::ClientSay, @ClientSay );	
 	g_Hooks.RegisterHook( Hooks::Game::MapChange, @MapChange );
 	
-	loadConfig();		
+	loadConfig();
 	loadVoiceData();
+	loadDefaultSentences();
 	
 	@g_enable_gain = CCVar("enable_gain", 1, "Amplify sounds by playing multiple instances at once (occasionally plays sounds off-sync).", ConCommandFlag::AdminOnly);
 	@g_global_gain = CCVar("global_gain", 0, "Extra volume applied to all sound files (0-6). Has no effect if gain is disabled.", ConCommandFlag::AdminOnly);
@@ -115,6 +120,7 @@ void PluginInit()
 	@g_debug_mode = CCVar("debug", 0, "If set to 1, sound details will be printed in chat and sounds will not play in a random order.", ConCommandFlag::AdminOnly);
 	@g_enable_global = CCVar("enable_global", 1, "Allow global commands", ConCommandFlag::AdminOnly);
 	@g_falloff = CCVar("falloff", 1.0, "Adjusts how far sounds can be heard (1 = normal, 0 = infinite)", ConCommandFlag::AdminOnly);
+	@g_use_sentences = CCVar("use_sentences", 1, "Set this to 0 for maps that override custom sentences and break voice commands", ConCommandFlag::AdminOnly);
 }
 
 void MapInit()
@@ -122,14 +128,20 @@ void MapInit()
 	g_Game.AlertMessage( at_console, "Precaching " + g_all_phrases.length() + " sounds and " + g_commands.length() + " sprites\n");
 	
 	for (uint i = 0; i < g_all_phrases.length(); i++) {
-		g_SoundSystem.PrecacheSound(g_all_phrases[i].soundFile);
-		g_Game.PrecacheGeneric("sound/" + g_all_phrases[i].soundFile); // yay, no more .res file hacking
+		string soundFile = g_all_phrases[i].soundFile;
+		if (!g_use_sentences.GetBool() and g_all_phrases[i].soundFile.Length() > 0 and g_all_phrases[i].soundFile[0] == "!") {
+			g_default_sentences.get(soundFile, soundFile);
+			println("LEL PRECACHING: " + soundFile);
+		}
+		if (soundFile.Length() > 0 and soundFile[0] != "!") {
+			g_SoundSystem.PrecacheSound(soundFile);
+			g_Game.PrecacheGeneric("sound/" + soundFile); // yay, no more .res file hacking
+		}
+		
 	}
 		
 	for (uint i = 0; i < g_commands.length(); i++)
 		g_Game.PrecacheModel(g_commands[i].sprite);
-	
-	//g_Game.PrecacheGeneric("gfx/env/barrendesertbk.tga");
 	
 	// Reset temporary vars on map change
 	array<string>@ states = player_states.getKeys();
@@ -163,7 +175,50 @@ enum parse_mode {
 	PARSE_VOICES,
 	PARSE_CMDS_1,
 	PARSE_CMDS_2,
+	PARSE_CMDS_3,
+	PARSE_CMDS_4,
 	PARSE_SPECIAL_CMDS,
+}
+
+dictionary g_default_sentences;
+
+void loadDefaultSentences()
+{
+	string fpath = plugin_path + "default_sentences.txt";
+	dictionary maps;
+	File@ f = g_FileSystem.OpenFile( fpath, OpenFile::READ );
+	if (f is null or !f.IsOpen())
+	{
+		println("Failed to open " + fpath);
+		return;
+	}
+	
+	int sentenceCount = 0;
+	string line;
+	while( !f.EOFReached() )
+	{
+		f.ReadLine(line);
+		line.Trim();
+		line.Trim("\t");
+		if (line.Length() == 0 or line.Find("//") == 0)
+			continue;
+			
+		array<string> parts = line.Split(" ");
+		if (parts.length() > 1) {
+			if (!g_default_sentences.exists(parts[0]))
+				continue; // don't care about sentences not used by any voice
+			if (parts[1].Find("(") != String::INVALID_INDEX)
+				continue; // complex sentences not supported yet (or ever probably)
+			
+			string ext = (parts[1].Find("bodyguard") != String::INVALID_INDEX) ? ".ogg" : ".wav";
+			string sentenceName = "!" + parts[0];
+			string soundFile = parts[1] + ext;
+			sentenceCount++;
+			g_default_sentences[sentenceName] = soundFile;
+		}
+	}
+	
+	//println("Loaded " + sentenceCount + " default sentences");
 }
 
 void loadConfig()
@@ -201,6 +256,14 @@ void loadConfig()
 				parseMode = PARSE_CMDS_2;
 				continue;
 			}
+			if (line == "[command_menu_3]") {
+				parseMode = PARSE_CMDS_3;
+				continue;
+			}
+			if (line == "[command_menu_4]") {
+				parseMode = PARSE_CMDS_4;
+				continue;
+			}
 			if (line == "[special_commands]") {
 				parseMode = PARSE_SPECIAL_CMDS;
 				continue;
@@ -222,6 +285,10 @@ void loadConfig()
 					command_menu_1_title = settingValue[1];
 				if (settingValue[0] == "command_menu_2_title")
 					command_menu_2_title = settingValue[1];
+				if (settingValue[0] == "command_menu_3_title")
+					command_menu_3_title = settingValue[1];
+				if (settingValue[0] == "command_menu_4_title")
+					command_menu_4_title = settingValue[1];
 			}
 			else if (parseMode == PARSE_VOICES)
 			{
@@ -229,7 +296,7 @@ void loadConfig()
 				g_talkers_ordered.insertLast(line);
 				//g_Game.AlertMessage( at_console, "Got voice: '" + line + "'\n");
 			}
-			else if (parseMode == PARSE_CMDS_1 or parseMode == PARSE_CMDS_2 or parseMode == PARSE_SPECIAL_CMDS)
+			else if (parseMode == PARSE_CMDS_1 or parseMode == PARSE_CMDS_2 or parseMode == PARSE_CMDS_3 or parseMode == PARSE_CMDS_4 or parseMode == PARSE_SPECIAL_CMDS)
 			{
 				array<string>@ cmd_values = line.Split(":");
 				if (cmd_values.length() != 2) 
@@ -242,6 +309,10 @@ void loadConfig()
 				CommandGroup c(cmd_values[0], cmd_values[1], 1);
 				if (parseMode == PARSE_CMDS_2)
 					c.menu = 2;
+				else if (parseMode == PARSE_CMDS_3)
+					c.menu = 3;
+				else if (parseMode == PARSE_CMDS_4)
+					c.menu = 4;
 				else if (parseMode == PARSE_SPECIAL_CMDS)
 					c.menu = 0;
 					
@@ -306,6 +377,9 @@ void loadVoiceData()
 						p.id = phraseIdNum++;
 						phrases.insertLast( p );
 						g_all_phrases.insertLast(@p);
+						if (params[1].Length() > 1 and params[1][0] == "!") {
+							g_default_sentences[params[1].SubString(1)] = true; // mark this for sentence loading later
+						}
 					}
 				}
 				//g_Game.AlertMessage( at_console, line + "\n");
@@ -398,7 +472,7 @@ void voiceMenuCallback(CTextMenu@ menu, CBasePlayer@ plr, int page, const CTextM
 	if (!g_debug_mode.GetBool() and delta < g_command_delay.GetFloat())
 	{
 		float waitTime = g_command_delay.GetFloat() - delta;
-		g_PlayerFuncs.ClientPrint(plr, HUD_PRINTCENTER, "Wait " + format_float(waitTime) + " seconds\n");
+		g_PlayerFuncs.PrintKeyBindingString(plr, "Wait " + format_float(waitTime) + " seconds\n");
 		return;
 	}
 	state.lastChatTime = t;
@@ -465,6 +539,11 @@ void voiceMenuCallback(CTextMenu@ menu, CBasePlayer@ plr, int page, const CTextM
 	
 	updatePlayerList();
 	
+	string soundFile = phrase.soundFile;
+	if (!g_use_sentences.GetBool() and soundFile.Length() > 0 and soundFile[0] == "!") {
+		g_default_sentences.get(soundFile, soundFile); // get the default sound file for the sentence
+	}
+	
 	for (uint i = 0; i < g_players.length(); i++)
 	{
 		if (g_players[i])
@@ -480,14 +559,14 @@ void voiceMenuCallback(CTextMenu@ menu, CBasePlayer@ plr, int page, const CTextM
 			for (uint g = 0; g < channels.length(); g++)
 			{
 				if (g < gain)
-					g_SoundSystem.PlaySound(plr.edict(), channels[g], phrase.soundFile, listenVol, attn, 0, state.pitch, listener.entindex());
+					g_SoundSystem.PlaySound(plr.edict(), channels[g], soundFile, listenVol, attn, 0, state.pitch, listener.entindex());
 				else
 					g_SoundSystem.StopSound(plr.edict(), channels[g], state.lastSample, false);
 			}
 		}
 	}
 	
-	state.lastSample = phrase.soundFile;
+	state.lastSample = soundFile;
 	
 	if (global)
 		g_PlayerFuncs.SayTextAll(plr, "(voice) " + plr.pev.netname + ": " + phraseId + "\n");
@@ -511,7 +590,7 @@ void voiceMenuCallback(CTextMenu@ menu, CBasePlayer@ plr, int page, const CTextM
 	}
 	
 	if (g_debug_mode.GetBool())
-		g_PlayerFuncs.SayTextAll(plr, "Gain: " + gain + ", Volume: " + vol + ", Pitch: " + state.pitch + ", Sound File: " + phrase.soundFile + "\n");
+		g_PlayerFuncs.SayTextAll(plr, "Idx: " + idx + "/" + (phrases.length()-1) + " Gain: " + gain + ", Volume: " + vol + ", Pitch: " + state.pitch + ", Sound File: " + soundFile + "\n");
 }
 
 // handles player voice selection
@@ -553,7 +632,14 @@ void openChatMenu(PlayerState@ state, CBasePlayer@ plr, int menuId, bool global)
 {
 	state.initMenu(plr, voiceMenuCallback, state.lastChatMenu != 0);
 	
-	string menuTitle = (menuId == 1) ? command_menu_1_title : command_menu_2_title;
+	string menuTitle = command_menu_1_title;
+	switch(menuId)
+	{
+		case 1: menuTitle = command_menu_1_title; break;
+		case 2: menuTitle = command_menu_2_title; break;
+		case 3: menuTitle = command_menu_3_title; break;
+		case 4: menuTitle = command_menu_4_title; break;
+	}
 	
 	if (state.lastChatMenu < 0)
 		global = !global;
@@ -610,14 +696,14 @@ bool doCommand(CBasePlayer@ plr, const CCommand@ args)
 	{
 		if ( args[0] == ".vc" )
 		{
-			if ( args[1] == "1" || args[1] == "2" )
+			if ( args[1] == "1" || args[1] == "2" || args[1] == "3" || args[1] == "4" )
 			{
-				openChatMenu(state, plr, args[1] == "1" ? 1 : 2, false);
+				openChatMenu(state, plr, atoi(args[1]), false);
 				return true;
 			}
-			if ( args[1] == 'global' and args.ArgC() > 2 and (args[2] == "1" || args[2] == "2") )
+			if ( args[1] == 'global' and args.ArgC() > 2 and (args[2] == "1" || args[2] == "2" || args[1] == "3" || args[1] == "4") )
 			{
-				openChatMenu(state, plr, args[2] == "1" ? 1 : 2, true);
+				openChatMenu(state, plr, atoi(args[2]), true);
 				return true;
 			}
 			if ( args[1] == "voice" )
@@ -638,8 +724,8 @@ bool doCommand(CBasePlayer@ plr, const CCommand@ args)
 			if ( args[1] == "pitch" and args.ArgC() > 2 )
 			{		
 				int newPitch = atoi( args[2] );
-				if (newPitch < 25)
-					newPitch = 25;
+				if (newPitch < 1)
+					newPitch = 1;
 				if (newPitch > 255)
 					newPitch = 255;
 					

@@ -24,7 +24,6 @@ STATIC hats/headphones
 STATIC hats/hood
 STATIC hats/jamacahat2
 STATIC hats/magic
-STATIC hats/merlin
 STATIC hats/paperbag
 STATIC hats/pyramidhead_new
 STATIC hats/santahat

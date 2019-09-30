@@ -18,7 +18,6 @@ ahahah mommamesa/weirdlaugh2.wav
 ahahaha biru/ahahahaa.ogg
 airhorn rautek/nigsnspics/airhorn.ogg
 aree ramubestmodel/aree.mp3
-ass rautek/make_it_stop/ass.mp3
 aww rautek/misc/aww.ogg
 ayaya rautek/misc/ayaya.wav
 baka biru/baka.ogg
@@ -47,9 +46,7 @@ ffs! rautek/max/ffs.ogg
 fuckmytits rautek/oof/fuckmytits.ogg
 fuckoff rautek/max/fuckoff.ogg
 gaben rautek/gus/gaben.ogg
-gah rautek/oof/gah.ogg
 gehweg rautek/ash/hq_ja_komm_geh_weg_du.ogg
-gj barney/ba_generic2.wav
 goofy rautek/h2whoa/goofy.ogg
 greetings scientist/greetings.wav
 gtfo rautek/nigsnspics/gtfo.ogg
@@ -61,13 +58,10 @@ hai rautek/staging/hai.ogg
 hay rautek/nigsnspics/hay.ogg
 helloladies scientist/helloladies.wav
 hentai biru/hentai.ogg
-hey barney/c1a4_ba_octo3.wav
-heystop barney/donthurtem.wav
 hi! rautek/chinkthieves/hi.wav
 hihi rautek/nigsnspics/hihi.ogg
 hitting rautek/nico/hitting2.ogg
 hohoou ramubestmodel/hohoou.mp3
-hoogaah rautek/staging/hoogaah.ogg
 huehuehue rautek/nigsnspics/huehuehue.ogg
 hurr rautek/nigsnspics/hurr.ogg
 interesting rautek/max/interesting.ogg
@@ -119,7 +113,6 @@ omg rautek/ash/hq_omg_ey.ogg
 omgh rautek/chinkthieves/omgh.mp3
 ono rautek/oof/ono.ogg
 oo ramubestmodel/oo.mp3
-oof rautek/staging/oof.ogg
 ooh ramubestmodel/ooh.mp3
 oohyea rautek/max/oohyea.ogg
 ooo ramubestmodel/ooo.mp3
@@ -175,7 +168,6 @@ xfiles rautek/nigsnspics/xfiles.ogg
 yaay rautek/chinkthieves/yaay.ogg
 yamero biru/yamero.ogg
 yapo rautek/chinkthieves/yapo.wav
-yawn scientist/yawn.wav
 yay cards/yay.ogg
 yees scientist/yees.wav
 yes! ramubestmodel/yes.mp3

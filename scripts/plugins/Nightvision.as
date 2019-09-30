@@ -7,6 +7,21 @@ const int iDecay = 1;
 const int iLife	= 2;
 const int iBrightness = 64;
 
+const array<string> DISALLOWED =    {"aomdc_1hospital", "aomdc_1hospital2", "aomdc_1garage", "aomdc_1backalley", "aomdc_1darkalley",
+                            "aomdc_1sewer", "aomdc_1city", "aomdc_1city2", "aomdc_1cityx", "aomdc_1ridingcar",
+                            "aomdc_1carforest", "aomdc_1afterforest", "aomdc_1angforest", "aomdc_1forhouse",
+                            "aomdc_1forest2", "aomdc_1forest3", "aomdc_1heaven1", "aomdc_1heaven2", "aomdc_2hospital",
+                            "aomdc_2hospital2", "aomdc_2garage", "aomdc_2backalley", "aomdc_2darkalley",
+                            "aomdc_2sewer", "aomdc_2city", "aomdc_2city2", "aomdc_2city3", "aomdc_2sick",
+                            "aomdc_2sick2", "aomdc_2sorgarden", "aomdc_2sorgarden2", "aomdc_2arforest",
+                            "aomdc_2afterforest", "aomdc_2angforest", "aomdc_2forhouse",
+                            "aomdc_2forest2", "aomdc_2forest3", "aomdc_2heaven1", "aomdc_2heaven2",
+                            "aomdc_3hospital", "aomdc_3hospital2", "aomdc_3garage", "aomdc_3backalley", "aomdc_3darkalley",
+                            "aomdc_3sewer", "aomdc_3city", "aomdc_3city2", "aomdc_3city3", "aomdc_3city4", "aomdc_3cityz",
+                            "aomdc_3sick", "aomdc_3sick2", "aomdc_3sorgarden", "aomdc_3sorgarden2",
+                            "aomdc_3arforest", "aomdc_3afterforest", "aomdc_3angforest", "aomdc_3forhouse",
+                            "aomdc_3forest2", "aomdc_3forest3", "aomdc_3heaven1", "aomdc_3heaven2"};
+
 void PluginInit()
 {
 	g_Module.ScriptInfo.SetAuthor( "Nero" );
@@ -37,6 +52,9 @@ class PlayerNVData
 
 void ToggleNV( const CCommand@ args )
 {
+   if(DISALLOWED.find(g_Engine.mapname) >= 0)
+      return;
+  
 	CBasePlayer@ pPlayer = g_ConCommandSystem.GetCurrentPlayer();
 
 	if( pPlayer.IsAlive() )	
