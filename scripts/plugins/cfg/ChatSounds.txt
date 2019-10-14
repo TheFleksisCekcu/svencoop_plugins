@@ -40,6 +40,7 @@ ee ramubestmodel/ee.mp3
 ehehehe biru/ehehehe.ogg
 english rautek/misc/english.ogg
 ethan rautek/nigsnspics/ethan.ogg
+faggot rautek/nigsnspics/faggot.ogg
 fail rautek/misc/fail.ogg
 feil ramubestmodel/feil.mp3
 ffs! rautek/max/ffs.ogg

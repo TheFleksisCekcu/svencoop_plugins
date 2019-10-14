@@ -81,7 +81,7 @@ HookReturnCode PlayerUse( CBasePlayer@ plr, uint& out uiFlags )
 		if (g_Engine.time - maxLastUse < g_cooldown.GetFloat()) {
 			if (g_cooldown.GetFloat() > 1) {
 				float waitTime = (maxLastUse + g_cooldown.GetFloat()) - g_Engine.time;
-				g_PlayerFuncs.PrintKeyBindingString(plr, "Wait " + format_float(waitTime) + " seconds\n");
+            g_PlayerFuncs.ClientPrint(plr, HUD_PRINTCENTER, "Wait " + format_float(waitTime) + " seconds\n");
 			}
 			return HOOK_CONTINUE;
 		}

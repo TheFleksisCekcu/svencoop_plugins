@@ -1,7 +1,3 @@
-const array<string> g_ModelList = {
-'dgf_wireman'
-};
-
 const array<string> g_AdditionalModelList = {
 'partybear'
 };
@@ -31,7 +27,7 @@ dictionary g_OriginalModelList;
 CScheduledFunction@ g_pThinkFunc = null;
 
 CClientCommand g_ListModels("listmodels", "List model names and colors of the current players", @ListModels);
-CClientCommand g_ListPrecachedModels("listprecachedmodels", "List model names who are currently precached by the server (admin only)", @ListPrecachedModels);
+CClientCommand g_ListPrecachedModels("listprecachedmodels", "List model names who are currently precached by the server (admin only)", @ListPrecachedModels, ConCommandFlag::AdminOnly);
 
 void PluginInit() {
   g_Module.ScriptInfo.SetAuthor("incognico");
@@ -42,14 +38,10 @@ void PluginInit() {
   g_Hooks.RegisterHook(Hooks::Player::ClientSay, @ClientSay);
   g_Hooks.RegisterHook(Hooks::Game::MapChange, @MapChange);
 
-  g_Scheduler.SetInterval("CrashModelCheck", 15.0f);
+  g_Scheduler.SetInterval("CrashModelCheck", 1.5f);
 }
 
 void MapInit() {
-  for (uint i = 0; i < g_ModelList.length(); ++i) {
-    g_Game.PrecacheGeneric("models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + ".mdl");
-  }
-  
   for (uint i = 0; i < g_AdditionalModelList.length(); ++i) {
     g_Game.PrecacheGeneric("models/player/" + g_AdditionalModelList[i] + "/" + g_AdditionalModelList[i] + ".mdl");
   }
@@ -100,29 +92,10 @@ HookReturnCode ClientPutInServer(CBasePlayer@ pPlayer) {
         pInfos.SetValue("model", string(g_OriginalModelList[SteamId]));
         g_OriginalModelList.delete(SteamId);
       }
-
-      if (pInfos.GetValue("model") == "helmet") {
-        if (pInfos.GetValue("topcolor") == 140 && pInfos.GetValue("bottomcolor") == 160) {
-          pInfos.SetValue("topcolor", Math.RandomLong(0, 255));
-          pInfos.SetValue("bottomcolor", Math.RandomLong(0, 255));
-        }
-
-        const string HelmetReplacement = g_ModelList[Math.RandomLong(0, g_ModelList.length()-1)];
-        pInfos.SetValue("model", HelmetReplacement);
-	g_Scheduler.SetTimeout("ShowMsg", 10, HelmetReplacement, g_EngineFuncs.IndexOfEdict(pPlayer.edict()));
-      }
     }
     return HOOK_CONTINUE;
   }
   return HOOK_CONTINUE;
-}
-
-void ShowMsg(string HelmetReplacement, int pIndex) {
-  CBasePlayer@ pPlayer = g_PlayerFuncs.FindPlayerByIndex(pIndex);
-  if (pPlayer !is null && pPlayer.IsConnected()) {
-    g_PlayerFuncs.ClientPrint(pPlayer, HUD_PRINTTALK, "[Info] You are using the default model 'helmet', replacing it with '" + HelmetReplacement + "'.\n");
-    g_PlayerFuncs.ClientPrint(pPlayer, HUD_PRINTTALK, "[Info] Download the big player model pack at  https://goo.gl/XYgma1  to fully enjoy the server.\n");
-  }
 }
 
 HookReturnCode ClientSay(SayParameters@ pParams) {
@@ -139,7 +112,7 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
       g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "[Info] Climate changes is not available on this map.\n");
     }
     else {
-      Vote@ WCVote = Vote('ClimateChange?', 'Change the climate until the end of the map?', 15.0f, 75.0f);
+      Vote@ WCVote = Vote('ClimateChange?', 'Change the climate until the end of the map?', 15.0f, 60.0f);
       WCVote.SetYesText('Yes, there\'s no planet B');
       WCVote.SetNoText('No, climate change is a lie');
       WCVote.SetVoteBlockedCallback(@WCVoteBlocked);
@@ -224,8 +197,8 @@ void CrashModelCheck() {
       KeyValueBuffer@ pInfos = g_EngineFuncs.GetInfoKeyBuffer(pPlayer.edict());
 
       if (g_CrashModelList.find(pInfos.GetValue("model")) >= 0) {
-        g_PlayerFuncs.ClientPrint(pPlayer, HUD_PRINTTALK, "[Warning] Don\'t use player model \'" + pInfos.GetValue("model") + "\', it is prone to crash clients!\n");
-        pInfos.SetValue("model", g_ModelList[Math.RandomLong(0, g_ModelList.length()-1)]);
+        g_PlayerFuncs.ClientPrint(pPlayer, HUD_PRINTTALK, "[Warning] Don\'t use player model \'" + pInfos.GetValue("model") + "\', it is prone to crash or obscures views!\n");
+        pInfos.SetValue("model", g_ClimateChangeModelList[Math.RandomLong(0, g_ClimateChangeModelList.length()-1)]);
       }
     }
   }
@@ -234,16 +207,13 @@ void CrashModelCheck() {
 void ListPrecachedModels(const CCommand@ pArgs) {
   CBasePlayer@ pCaller = g_ConCommandSystem.GetCurrentPlayer();
 
-  if (g_PlayerFuncs.AdminLevel(pCaller) < ADMIN_YES) {
-    g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, "You have no access to this command.\n");
-    return;
-  }
-
   g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, "CURRENTLY PRECACHED MODELS\n");
-  g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, "--Replacement-------------\n");
-  
-  for (uint i = 0; i < g_ModelList.length(); ++i) {
-    g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, g_ModelList[i] + "\n");
+  if ( g_MaxVotes > 0 ) {
+    g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, "--ClimateChange-----------\n");
+
+    for (uint i = 0; i < g_ClimateChangeModelList.length(); ++i) {
+      g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, g_ClimateChangeModelList[i] + "\n");
+    }
   }
 
   g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, "--Additional--------------\n");
@@ -252,11 +222,4 @@ void ListPrecachedModels(const CCommand@ pArgs) {
     g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, g_AdditionalModelList[i] + "\n");
   }
 
-  if ( g_MaxVotes > 0 ) {
-    g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, "--ClimateChange-----------\n");
-
-    for (uint i = 0; i < g_ClimateChangeModelList.length(); ++i) {
-      g_PlayerFuncs.ClientPrint(pCaller, HUD_PRINTCONSOLE, g_ClimateChangeModelList[i] + "\n");
-    }
-  }
 }

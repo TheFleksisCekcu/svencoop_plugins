@@ -48,7 +48,7 @@ void loadFiles(){
 		
 		array<string> subLines = line.Split(",");
 		
-		if(subLines.length < 5) continue;
+		if(subLines.length() < 5) continue;
 		if(subLines[1].Length() < 5) continue;
 		if(mapname != subLines[0]) continue;
 		
@@ -59,7 +59,7 @@ void loadFiles(){
 		if(randomNumber >= itemChance + monsterChance) continue;
 		
 		array<string> sub1subLines = subLines[1].Split(" ");
-		if(sub1subLines.length != 3) continue;
+		if(sub1subLines.length() != 3) continue;
 		
 		Vector originPos = Vector(atof( sub1subLines[0] ), atof( sub1subLines[1] ), atof( sub1subLines[2] ));
 		
@@ -69,13 +69,13 @@ void loadFiles(){
 		if(randomNumber < itemChance){
 			//Create Weaponbox
 			float maxRandom = 0.0f;
-			for(uint i = 6; i < subLines.length; i+=2){
+			for(uint i = 6; i < subLines.length(); i+=2){
 				maxRandom += atof( subLines[i] );
 			}
 			
 			randomNumber = Math.RandomFloat(0.0f, maxRandom);
 			
-			for(uint i = 6; i < subLines.length; i+=2){
+			for(uint i = 6; i < subLines.length(); i+=2){
 				float currRandom = atof( subLines[i] );
 				if(randomNumber <= currRandom){
 					EventBox data(originPos, atof( subLines[2] ), atoi( subLines[i-1] ), 0);
@@ -86,8 +86,8 @@ void loadFiles(){
 			}
 		}else{
 			//Create Headcrab
-			if(subLines.length%2 == 0){
-				EventBox data(originPos, atof( subLines[2] ), -1, atoi( subLines[subLines.length-1] ));
+			if(subLines.length()%2 == 0){
+				EventBox data(originPos, atof( subLines[2] ), -1, atoi( subLines[subLines.length()-1] ));
 				@boxes[ arrSize-1 ] = @data;
 			}else{
 				EventBox data(originPos, atof( subLines[2] ), -1, 0);
@@ -109,7 +109,7 @@ void loadFiles(){
 		
 		array<string> subLines = line.Split(" ");
 		
-		if(subLines.length != 13) continue;
+		if(subLines.length() != 13) continue;
 		
 		for(int i = 0; i < arrSize; i++){
 			EventBox@ eBox = boxes[i];
@@ -141,7 +141,7 @@ void loadFiles(){
 				dmgStr = "0";
 			}
 			dictionary keyvalues = {
-				{ "model", "models/npcs_v2/zombie/rothgelen.mdl" },
+				{ "model", "models/fuchs_halloween/misc/tf2_pumpkin_loot.mdl" },
 				{ "health", "75" },
 				{ "gag", "-1" },
 				{ "dmg", dmgStr },
@@ -171,7 +171,7 @@ void loadFiles(){
 				string str11 = "" + eBox.ammoArray[11];
 				string str12 = "" + eBox.ammoArray[12];
 				dictionary keyvalues = {
-					{ "model", "models/npcs_v2/zombie/rothgelen.mdl" },
+					{ "model", "models/fuchs_halloween/misc/tf2_pumpkin_loot.mdl" },
 					{ "sequencename", "idle" },
 					{ "sequence", "0" },
 					{ "movetype", "0" },
@@ -200,7 +200,7 @@ void loadFiles(){
 				string posStr = "" + eBox.ori.x + " " + eBox.ori.y + " " + eBox.ori.z;
 				string str01 = "" + eBox.ammoArray[0];
 				dictionary keyvalues = {
-					{ "model", "models/npcs_v2/zombie/rothgelen.mdl" },
+					{ "model", "models/fuchs_halloween/misc/tf2_pumpkin_loot.mdl" },
 					{ "health", str01 },
 					{ "sequencename", "idle" },
 					{ "sequence", "0" },
@@ -233,7 +233,7 @@ void countPeople(){
 }
 
 void EBPrecache(){
-	g_Game.PrecacheModel( "models/npcs_v2/zombie/rothgelen.mdl" );
+	g_Game.PrecacheModel( "models/fuchs_halloween/misc/tf2_pumpkin_loot.mdl" );
 }
 
 void PluginInit() {
