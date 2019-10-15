@@ -249,7 +249,6 @@
 2 : voice_commands/scientist/run1.ogg
 2 : voice_commands/scientist/run2.ogg
 2 : !SC_ZOMBIE1A
-1 : scientist/c1a3_sci_silo2a.wav
 1 : !SC_FEAR3
 1 : scientist/gottogetout.wav
 2 : !SC_POWER2

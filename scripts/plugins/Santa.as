@@ -1,5 +1,3 @@
-// todo: handgrenade: checl for g_SurvivalMode.IsActive()
-
 // settings
 const bool g_togglesolid        = true;
 const bool g_replaceitemmodels  = true;
@@ -75,7 +73,7 @@ class BadPresent : ScriptBaseItemEntity {
         
         g_EntityFuncs.Remove( self );
 
-        if ( Math.RandomLong(0, 2) == 0 ) {
+        if ( !g_SurvivalMode.IsActive() && Math.RandomLong(0, 2) == 0 ) {
             if ( Math.RandomLong(0, 1) == 0 ) {
                 dictionary keyvalues = {
                     { "health", "1" },
@@ -84,13 +82,6 @@ class BadPresent : ScriptBaseItemEntity {
 
                 g_EntityFuncs.CreateEntity( "monster_handgrenade", keyvalues );
                 g_Scheduler.SetTimeout( "KillHelper", 1, EHandle( pPlayer ) );
-            }
-            else {
-                dictionary keyvalues = {
-                    { "origin", originStr }
-                };
-                
-                g_EntityFuncs.CreateEntity( "voltigoreshock", keyvalues );
             }
         }
         else {

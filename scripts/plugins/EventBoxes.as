@@ -1,4 +1,9 @@
 
+//1 - always Weaponbox
+//2 - always Battery
+//3 - Only Headcrabs if Random allow it
+int debugMode = 0;
+
 final class EventBox {
 	//Position of Object
 	Vector ori;
@@ -8,8 +13,8 @@ final class EventBox {
 	
 	//ammoArray[0]: Positive number = Item
 	//ammoArray[0]: Minus one = Headcrab
-	// Battery, 9mm, 357, Shell, Armburst-Bolt, M16-Bullet, AR-Grenade, RPG, Uranium, Grenade, Satchel, Tripmine and Snarks
-	array<int> ammoArray = {0,0,0,0,0,0,0,0,0,0,0,0,0};
+	// Battery, 9mm, 357, Shell, Armburst-Bolt, M16-Bullet, AR-Grenade, RPG, Uranium, Grenade, Satchel, Tripmine, Snarks, Spores and 762
+	array<int> ammoArray = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	
 	int classify;
 	
@@ -23,8 +28,6 @@ final class EventBox {
 		classify = c;
 	}
 }
-
-int numberPeople;
 
 void loadFiles(){
 	File@ pFile = g_FileSystem.OpenFile( "scripts/plugins/cfg/EventItemList.txt", OpenFile::READ );
@@ -56,17 +59,14 @@ void loadFiles(){
 		float itemChance = atof( subLines[3] );
 		float monsterChance = atof( subLines[4] );
 		
-		if(randomNumber >= itemChance + monsterChance) continue;
+		if(randomNumber >= itemChance + monsterChance && debugMode == 0) continue;
 		
 		array<string> sub1subLines = subLines[1].Split(" ");
 		if(sub1subLines.length() != 3) continue;
 		
 		Vector originPos = Vector(atof( sub1subLines[0] ), atof( sub1subLines[1] ), atof( sub1subLines[2] ));
 		
-		++arrSize;
-		boxes.resize( arrSize );
-		
-		if(randomNumber < itemChance){
+		if((randomNumber < itemChance && debugMode == 0) || debugMode == 1 || debugMode == 2){
 			//Create Weaponbox
 			float maxRandom = 0.0f;
 			for(uint i = 6; i < subLines.length(); i+=2){
@@ -78,13 +78,18 @@ void loadFiles(){
 			for(uint i = 6; i < subLines.length(); i+=2){
 				float currRandom = atof( subLines[i] );
 				if(randomNumber <= currRandom){
+					++arrSize;
+					boxes.resize( arrSize );
 					EventBox data(originPos, atof( subLines[2] ), atoi( subLines[i-1] ), 0);
 					@boxes[ arrSize-1 ] = @data;
 					break;
 				}
 				randomNumber -= currRandom;
 			}
-		}else{
+		}else if(debugMode < 3 || monsterChance > 0.0f){
+			++arrSize;
+			boxes.resize( arrSize );
+			
 			//Create Headcrab
 			if(subLines.length()%2 == 0){
 				EventBox data(originPos, atof( subLines[2] ), -1, atoi( subLines[subLines.length()-1] ));
@@ -104,12 +109,12 @@ void loadFiles(){
 	while( !pFile2.EOFReached() ){
 		pFile2.ReadLine( line );
 		
-		if(line.Length() < 25) continue;
+		if(line.Length() < 29) continue;
 		if(line.Find("//") != String::INVALID_INDEX) continue;
 		
 		array<string> subLines = line.Split(" ");
 		
-		if(subLines.length() != 13) continue;
+		if(subLines.length() != 15) continue;
 		
 		for(int i = 0; i < arrSize; i++){
 			EventBox@ eBox = boxes[i];
@@ -117,8 +122,23 @@ void loadFiles(){
 			if(eBox.ammoArray[0] != validCounter) continue;
 			if(!eBox.useFirst) continue;
 			
-			for(uint j = 0; j < 13; j++){
-				eBox.ammoArray[j] = atoi( subLines[j] );
+			for(uint j = 0; j < 15; j++){
+				switch(debugMode){
+				case 1:
+					if(j == 1)
+						eBox.ammoArray[j] = 1;
+					else
+						eBox.ammoArray[j] = 0;
+					break;
+				case 2:
+					if(j == 0)
+						eBox.ammoArray[j] = 1;
+					else
+						eBox.ammoArray[j] = 0;
+					break;
+				default:
+					eBox.ammoArray[j] = atoi( subLines[j] );
+				}
 			}
 			eBox.useFirst = false;
 		}
@@ -126,7 +146,7 @@ void loadFiles(){
 	}
 	pFile2.Close();
 	
-	//Step 3: Create actual Entities
+	//Step 3: Create Entities
 	for(int i = 0; i < arrSize; ++i){
 		
 		EventBox@ eBox = boxes[i];
@@ -137,24 +157,24 @@ void loadFiles(){
 			string posStr = "" + eBox.ori.x + " " + eBox.ori.y + " " + eBox.ori.z;
 			string claStr = "" + eBox.classify;
 			string dmgStr = "10";
-			if(numberPeople > 28){
-				dmgStr = "0";
-			}
 			dictionary keyvalues = {
-				{ "model", "models/fuchs_halloween/misc/tf2_pumpkin_loot.mdl" },
+				{ "model", "models/cubemath/pumpkinheadcrab.mdl" },
+				{ "soundlist", "../headcrabpumpkin/replace.txt" },
 				{ "health", "75" },
 				{ "gag", "-1" },
 				{ "dmg", dmgStr },
 				{ "origin", posStr },
 				{ "angles", angStr },
 				{ "classify", claStr },
-				{ "displayname", "SantaBlob" },
+				{ "displayname", "Pumpkin" },
 				{ "spawnflags", "4" }
 			};
 			g_EntityFuncs.CreateEntity("monster_headcrab", keyvalues);
 			
-			// string outStr = "EVIL: " + posStr + "\n";
-			// g_PlayerFuncs.ClientPrintAll( HUD_PRINTTALK, outStr ); 
+			if(debugMode > 0){
+				string outStr = "EVIL: " + posStr + "\n";
+				g_PlayerFuncs.ClientPrintAll( HUD_PRINTCONSOLE, outStr );
+			}
 		}else{
 			if(eBox.ammoArray[0] == 0){
 				string posStr = "" + eBox.ori.x + " " + eBox.ori.y + " " + (1+eBox.ori.z);
@@ -170,8 +190,10 @@ void loadFiles(){
 				string str10 = "" + eBox.ammoArray[10];
 				string str11 = "" + eBox.ammoArray[11];
 				string str12 = "" + eBox.ammoArray[12];
+				string str13 = "" + eBox.ammoArray[13];
+				string str14 = "" + eBox.ammoArray[14];
 				dictionary keyvalues = {
-					{ "model", "models/fuchs_halloween/misc/tf2_pumpkin_loot.mdl" },
+					{ "model", "models/cubemath/pumpkinheadcrab.mdl" },
 					{ "sequencename", "idle" },
 					{ "sequence", "0" },
 					{ "movetype", "0" },
@@ -190,17 +212,21 @@ void loadFiles(){
 					{ "satchelcharge", str10 },
 					{ "tripmine", str11 },
 					{ "Snarks", str12 },
+					{ "sporeclip", str13 },
+					{ "m40a1", str14 },
 					{ "spawnflags", "1152" }
 				};
 				g_EntityFuncs.CreateEntity("weaponbox", keyvalues);
 				
-				// string outStr = "AMMO: " + posStr + "\n";
-				// g_PlayerFuncs.ClientPrintAll( HUD_PRINTTALK, outStr ); 
+				if(debugMode > 0){
+					string outStr = "AMMO: " + posStr + "\n";
+					g_PlayerFuncs.ClientPrintAll( HUD_PRINTCONSOLE, outStr );
+				}
 			}else{
 				string posStr = "" + eBox.ori.x + " " + eBox.ori.y + " " + eBox.ori.z;
 				string str01 = "" + eBox.ammoArray[0];
 				dictionary keyvalues = {
-					{ "model", "models/fuchs_halloween/misc/tf2_pumpkin_loot.mdl" },
+					{ "model", "models/cubemath/pumpkinheadcrab.mdl" },
 					{ "health", str01 },
 					{ "sequencename", "idle" },
 					{ "sequence", "0" },
@@ -212,55 +238,32 @@ void loadFiles(){
 				};
 				g_EntityFuncs.CreateEntity("item_battery", keyvalues);
 				
-				// string outStr = "HEV : " + posStr + "\n";
-				// g_PlayerFuncs.ClientPrintAll( HUD_PRINTTALK, outStr ); 
+				if(debugMode > 0){
+					string outStr = "HEV : " + posStr + "\n";
+					g_PlayerFuncs.ClientPrintAll( HUD_PRINTCONSOLE, outStr );
+				}
 			}
 		}
-	}
-	countPeople();
-}
-
-void countPeople(){
-	numberPeople = 0;
-	CBasePlayer@ pPlayer = null;
-	
-	for( int iPlayer = 1; iPlayer <= g_Engine.maxClients; ++iPlayer ){
-		@pPlayer = g_PlayerFuncs.FindPlayerByIndex( iPlayer );
-		
-		if(!( pPlayer is null || !pPlayer.IsConnected() ))
-			++numberPeople;
 	}
 }
 
 void EBPrecache(){
-	g_Game.PrecacheModel( "models/fuchs_halloween/misc/tf2_pumpkin_loot.mdl" );
+	g_Game.PrecacheModel( "models/cubemath/pumpkinheadcrab.mdl" );
+	g_SoundSystem.PrecacheSound( "headcrabpumpkin/hc_attack1.wav" );
+	g_SoundSystem.PrecacheSound( "headcrabpumpkin/hc_attack2.wav" );
+	g_SoundSystem.PrecacheSound( "headcrabpumpkin/hc_attack3.wav" );
+	g_SoundSystem.PrecacheSound( "headcrabpumpkin/hc_die1.wav" );
+	g_SoundSystem.PrecacheSound( "headcrabpumpkin/hc_die2.wav" );
+	g_SoundSystem.PrecacheSound( "headcrabpumpkin/hc_headbite.wav" );
+	g_SoundSystem.PrecacheSound( "null.wav" );
 }
 
 void PluginInit() {
 	g_Module.ScriptInfo.SetAuthor( "CubeMath" );
 	g_Module.ScriptInfo.SetContactInfo( "steamcommunity.com/id/CubeMath" );
-	
-	g_Hooks.RegisterHook( Hooks::Player::ClientPutInServer, @ClientPutInServer );
-	g_Hooks.RegisterHook( Hooks::Player::ClientDisconnect, @ClientDisconnect );
-	
-	countPeople();
 }
 
 void MapInit() {
 	EBPrecache();
-	g_Scheduler.SetTimeout( "loadFiles", 2.0 );
-}
-
-HookReturnCode ClientPutInServer( CBasePlayer@ pPlayer ){
-
-	if (g_Engine.time > 3.0) countPeople();
-	
-	return HOOK_CONTINUE;
-}
-
-HookReturnCode ClientDisconnect( CBasePlayer@ pPlayer ){
-
-	if (g_Engine.time > 3.0) countPeople();
-	
-	return HOOK_CONTINUE;
+	g_Scheduler.SetTimeout( "loadFiles", 5.0 );
 }

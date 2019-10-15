@@ -1,5 +1,5 @@
 [Yes]
-2 : bodyguard/yougotit.ogg
+3 : !BG_OK2
 
 [No]
 3 : !BG_POK1
@@ -39,8 +39,8 @@
 4 : !BG_MORTAL0
 4 : !BG_KILL1
 3 : !BG_IDLE1
-3 : !BG_POK3
 3 : !BG_POK2
+3 : !BG_POK3
 3 : !BG_IDLE0
 
 [Taunt]

@@ -60,7 +60,6 @@
 2 : barney/ba_ok3.wav
 3 : barney/ba_ok5.wav
 2 : barney/ba_stare3.wav
-4 : barney/dobettertogether.wav
 3 : !BA_OK5
 4 : !BA_OK0
 
