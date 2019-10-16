@@ -32,7 +32,6 @@ cheer tfc/ambience/goal_1.wav
 cry twlz/cry.ogg
 daijobu twlz/daijobu.ogg
 daredesu twlz/daredesu.ogg
-dontwantdie scientist/dontwantdie.wav
 doot twlz/doot.ogg
 ecchi twlz/ecchi.mp3
 ecchihentai twlz/ecchihentai.mp3
@@ -98,7 +97,6 @@ no! twlz/noo.wav
 nobiba twlz/nobiba.mp3
 noice twlz/noice.ogg
 nonono keen/apunono.wav
-noo scientist/noo.wav
 nope twlz/engineer_no01.ogg
 nopls scientist/noplease.wav
 nun twlz/nun.ogg
@@ -170,7 +168,6 @@ yaay twlz/yaay.ogg
 yamero twlz/yamero.ogg
 yapo twlz/yapo.wav
 yay cards/yay.ogg
-yees scientist/yees.wav
 yes! twlz/yes.mp3
 yey w00tguy/botrace/yay.wav
 yo twlz/hq_yo.ogg

@@ -131,11 +131,10 @@ void MapInit()
 		string soundFile = g_all_phrases[i].soundFile;
 		if (!g_use_sentences.GetBool() and g_all_phrases[i].soundFile.Length() > 0 and g_all_phrases[i].soundFile[0] == "!") {
 			g_default_sentences.get(soundFile, soundFile);
-			println("LEL PRECACHING: " + soundFile);
 		}
 		if (soundFile.Length() > 0 and soundFile[0] != "!") {
 			g_SoundSystem.PrecacheSound(soundFile);
-			g_Game.PrecacheGeneric("sound/" + soundFile); // yay, no more .res file hacking
+			g_Game.PrecacheGeneric("sound/" + soundFile);
 		}
 		
 	}

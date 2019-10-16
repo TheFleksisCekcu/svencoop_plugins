@@ -2,10 +2,10 @@ void print(string text) { g_Game.AlertMessage( at_console, text); }
 void println(string text) { print(text + "\n"); }
 
 void PluginInit() {
-    g_Module.ScriptInfo.SetAuthor( "w00tguy" );
-    g_Module.ScriptInfo.SetContactInfo( "https://github.com/wootguy/emotes" );
+	g_Module.ScriptInfo.SetAuthor( "w00tguy" );
+	g_Module.ScriptInfo.SetContactInfo( "https://github.com/wootguy/emotes" );
 
-    g_Hooks.RegisterHook( Hooks::Player::ClientSay, @ClientSay );
+	g_Hooks.RegisterHook( Hooks::Player::ClientSay, @ClientSay );
 	
 	loadEmotes();
 }
@@ -53,15 +53,15 @@ void player_pose_freeze_frame(EHandle h_plr, int seq, float frame) {
 	}
 	
 	CBaseEntity@ plr = h_plr;
+	if (!plr.IsAlive()) {
+		g_PlayerFuncs.SayText(plr, "Can't play emote while dead.\n");
+		return;
+	}
+
 	if (plr.pev.sequence != seq) {
 		return;
 	}
 
-   if (!plr.IsAlive()) {
-      g_PlayerFuncs.SayText(plr, "Can't play emote while dead.\n");
-      return;
-   }
-	
 	if (plr.pev.frame >= frame) {
 		plr.pev.frame = frame;
 		plr.pev.framerate = 0.00001f;
