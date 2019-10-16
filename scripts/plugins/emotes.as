@@ -56,6 +56,11 @@ void player_pose_freeze_frame(EHandle h_plr, int seq, float frame) {
 	if (plr.pev.sequence != seq) {
 		return;
 	}
+
+   if (!plr.IsAlive()) {
+      g_PlayerFuncs.SayText(plr, "Can't play emote while dead.\n");
+      return;
+   }
 	
 	if (plr.pev.frame >= frame) {
 		plr.pev.frame = frame;
