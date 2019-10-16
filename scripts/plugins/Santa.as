@@ -15,15 +15,21 @@ const array<string> g_monsters  = { "monster_headcrab", "monster_babycrab", "mon
 const array<string> g_spawnents = { 'info_player_start', 'info_player_deathmatch', 'info_player_coop', 'info_player_dm2' };
 
 const array<string> g_MapBlacklist = {
+'aom_*',
+'aomdc_*',
 'bm_sts',
 'bossbattle',
+'botparty',
+'botrace',
 'ctf_warforts',
 'road_to_shinnen',
 'rust_islands_b7',
 'rust_legacy_b7',
 'rust_mini_b8',
 'shitty_pubg',
-'th_escape'
+'spaceinvaders',
+'th_escape',
+'uboa'
 };
 ///////////
 
@@ -132,6 +138,9 @@ void MapInit() {
     g_Game.PrecacheMonster( "monster_human_assassin", true );
     g_Game.PrecacheModel( "sprites/blueflare2.spr" );
 
+
+    g_Game.PrecacheGeneric ( 'sound/' + g_painsound );
+    g_Game.PrecacheGeneric ( 'sound/' + g_effectsound );
     g_SoundSystem.PrecacheSound( g_painsound );
     g_SoundSystem.PrecacheSound( g_effectsound );
     
@@ -159,7 +168,7 @@ HookReturnCode PlayerKilled( CBasePlayer@ pPlayer, CBaseEntity@ pAttacker, int i
     if ( ( pPlayer.pev.health < -40 && iGib != GIB_NEVER ) || iGib == GIB_ALWAYS )
         CreateGibs( pPlayer.pev.origin );
 
-        if ( g_MapBlacklist.find( g_Engine.mapname ) >= 0 )
+        if ( MapBlacklisted() )
                 return HOOK_CONTINUE;
     
     string originStr = "" + pPlayer.pev.origin.x + " " + pPlayer.pev.origin.y + " " + pPlayer.pev.origin.z;
@@ -406,3 +415,29 @@ void ReplaceItemModels() {
     }
 }
 
+bool MapBlacklisted() {
+    bool wildcard = false;
+    bool disabled = false;
+
+    for ( uint i = 0; i < g_MapBlacklist.length(); i++ ) {
+        string tmp = g_MapBlacklist[i];
+
+        if ( tmp.SubString( g_MapBlacklist.length()-1, 1 ) == "*" ) {
+            wildcard =  true;
+            tmp = tmp.SubString( 0, tmp.Length()-1 );
+        }
+
+        if ( wildcard ) {
+            if ( tmp == string( g_Engine.mapname ).SubString( 0, tmp.Length() ) ) {
+                disabled = true;
+                break;
+            }
+        }
+        else if ( g_Engine.mapname == g_MapBlacklist[i] ) {
+            disabled = true;
+            break;
+        }
+    }
+
+    return disabled;
+}
