@@ -1,7 +1,7 @@
 const int g_MaxVotes = 3; // times per map party mode can be enabled
 const int g_VoteWaitTime = 300; // time in seconds between a new vote (on or off) is possible
 //const string g_PartySound = "svencoop2/stadium3.wav"; // path to some sound in sound/ to play when PM was enabled or remove lines 30,31,85
-const string g_PartySound = "rautek/nico/party.ogg"; // path to some sound in sound/ to play when PM was enabled or remove lines 30,31,85
+const string g_PartySound = "twlz/party.ogg"; // path to some sound in sound/ to play when PM was enabled or remove lines 30,31,85
 
 const string g_Keyrendermode = "$i_origrendermode";
 const string g_Keyrenderfx = "$i_origrenderfx";

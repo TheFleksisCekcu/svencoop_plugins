@@ -1,7 +1,7 @@
 array<string> g_Allahus;
 array<string> g_AllahusActive;
 CScheduledFunction@ g_pThinkFunc = null;
-const string sound = 'rautek/max/allahusingle.ogg';
+const string sound = 'twlz/allahusingle.ogg';
 const int satchelcount = 8;
 
 const array<string> g_IgnoreMaps = {
