@@ -10,6 +10,7 @@ const array<string> g_CrashModelList = {
 'apacheshit',
 'axis2_s5',
 'big_mom',
+'friendlygarg',
 'garg',
 'gargantua',
 'owatarobo',

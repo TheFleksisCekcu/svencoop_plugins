@@ -27,7 +27,7 @@
 3 : !BG_OK1
 
 [Help]
-3 : !BG_MAD2
+2 : !BG_MAD2
 
 [Sorry]
 3 : !BG_STOP0
