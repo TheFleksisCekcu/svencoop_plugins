@@ -20,7 +20,7 @@ void CheckPlayerSinking(){
 					pEntity.pev.movetype = 8;
 				}
 			}
-			else if( pEntity.GetClassname() == "player" && pEntity.IsAlive() &&  pEntity.pev.health > 99999) {
+			else if( pEntity.GetClassname() == "player" && pEntity.IsAlive() &&  pEntity.pev.health > 10001) {
 				g_EntityFuncs.Remove( pEntity );
 			}
 		}

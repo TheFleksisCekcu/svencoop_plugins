@@ -6,21 +6,16 @@ void PluginInit()
 
 void MapInit()
 {
-   if ( g_SurvivalMode.IsActive() )
-      return;
+//   if ( g_SurvivalMode.IsActive() )
+//      return;
 
-   g_EngineFuncs.CVarSetFloat( "mp_survival_supported", 1 );
-   
    g_Game.PrecacheModel( "sprites/exit1.spr" );
    g_Game.PrecacheModel( "models/common/lambda.mdl" );
    g_SoundSystem.PrecacheSound( "../media/valve.mp3" );
    g_SoundSystem.PrecacheSound( "debris/beamstart7.wav" );
    g_SoundSystem.PrecacheSound( "debris/beamstart4.wav" );
    g_SoundSystem.PrecacheSound( "ambience/port_suckout1.wav" );
-}
 
-void MapActivate()
-{
    string map = string( g_Engine.mapname ).ToLowercase;
    string path = "scripts/plugins/cfg/smaker/";
    path += map + ".ini";
@@ -44,8 +39,10 @@ void MapActivate()
          checkpoints++;
       }
 
-      if ( checkpoints > 0 )
+      if ( checkpoints > 0 ) {
+         g_EngineFuncs.CVarSetFloat( "mp_survival_supported", 1 );
          g_Game.AlertMessage( at_console, "[Survival Maker] " + checkpoints + " checkpoint(s) successfully loaded.\n" );
+      }
       else
          g_Game.AlertMessage( at_console, "[Survival Maker] WARNING: Map " + map + " has no checkpoints specified.\n" );
    }
