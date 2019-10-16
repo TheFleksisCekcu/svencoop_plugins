@@ -79,10 +79,10 @@ class BadPresent : ScriptBaseItemEntity {
         
         g_EntityFuncs.Remove( self );
 
-        if ( !g_SurvivalMode.IsActive() && Math.RandomLong(0, 2) == 0 ) {
+        if ( !g_SurvivalMode.IsActive() && Math.RandomLong(0, 3) == 0 ) {
             if ( Math.RandomLong(0, 1) == 0 ) {
                 dictionary keyvalues = {
-                    { "health", "1" },
+                    { "health", "2" },
                     { "origin", originStr }
                 };
 
@@ -136,8 +136,6 @@ void MapInit() {
         g_Game.PrecacheMonster( g_monsters[i], false );
     }
     g_Game.PrecacheMonster( "monster_human_assassin", true );
-    g_Game.PrecacheModel( "sprites/blueflare2.spr" );
-
 
     g_Game.PrecacheGeneric ( 'sound/' + g_painsound );
     g_Game.PrecacheGeneric ( 'sound/' + g_effectsound );
