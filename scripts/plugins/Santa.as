@@ -1,3 +1,5 @@
+#include "MapBlacklist"
+
 // settings
 const bool g_togglesolid        = true;
 const bool g_replaceitemmodels  = true;
@@ -13,24 +15,6 @@ const string g_painsound        = "fgrunt/gr_pain6.wav";
 const string g_effectsound      = "debris/beamstart4.wav";
 const array<string> g_monsters  = { "monster_headcrab", "monster_babycrab", "monster_snark", "monster_shockroach" }; // "monster_cockroach", "monster_rat" // "monster_chumtoad" too strong
 const array<string> g_spawnents = { 'info_player_start', 'info_player_deathmatch', 'info_player_coop', 'info_player_dm2' };
-
-const array<string> g_MapBlacklist = {
-'aom_*',
-'aomdc_*',
-'bm_sts',
-'bossbattle',
-'botparty',
-'botrace',
-'ctf_warforts',
-'road_to_shinnen',
-'rust_islands_b7',
-'rust_legacy_b7',
-'rust_mini_b8',
-'shitty_pubg',
-'spaceinvaders',
-'th_escape',
-'uboa'
-};
 ///////////
 
 dictionary g_Counter;
@@ -411,31 +395,4 @@ void ReplaceItemModels() {
         //if ( pEnt.pev.model == "models/w_battery.mdl" )
             g_EntityFuncs.SetModel( pEnt, g_batterymodel );
     }
-}
-
-bool MapBlacklisted() {
-    bool wildcard = false;
-    bool disabled = false;
-
-    for ( uint i = 0; i < g_MapBlacklist.length(); i++ ) {
-        string tmp = g_MapBlacklist[i];
-
-        if ( tmp.SubString( g_MapBlacklist.length()-1, 1 ) == "*" ) {
-            wildcard =  true;
-            tmp = tmp.SubString( 0, tmp.Length()-1 );
-        }
-
-        if ( wildcard ) {
-            if ( tmp == string( g_Engine.mapname ).SubString( 0, tmp.Length() ) ) {
-                disabled = true;
-                break;
-            }
-        }
-        else if ( g_Engine.mapname == g_MapBlacklist[i] ) {
-            disabled = true;
-            break;
-        }
-    }
-
-    return disabled;
 }

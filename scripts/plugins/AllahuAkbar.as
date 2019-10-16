@@ -1,19 +1,12 @@
+// script is crashy, especialy when many players allahu at once -> server crash
+
+#include "MapBlacklist"
+
 array<string> g_Allahus;
 array<string> g_AllahusActive;
 CScheduledFunction@ g_pThinkFunc = null;
 const string sound = 'twlz/allahusingle.ogg';
 const int satchelcount = 8;
-
-const array<string> g_IgnoreMaps = {
-'bm_sts',
-'ctf_warforts',
-'rust_legacy_b7',
-'rust_islands_b8',
-'rust_legacy_b7',
-'rust_islands_b8',
-'rust_mini_b7',
-'rust_mini_b8'
-};
 
 void PluginInit() {
   g_Module.ScriptInfo.SetAuthor("incognico");
@@ -40,7 +33,7 @@ void Boom(CBasePlayer@ pPlayer) {
     g_AllahusActive.insertLast(steamId);
   }
 
-  if (g_SurvivalMode.IsActive() || g_IgnoreMaps.find(g_Engine.mapname) >= 0) {
+  if (g_SurvivalMode.IsActive() || MapBlacklisted()) {
     //g_PlayerFuncs.SayText(pPlayer, "[AllahuAkbar] Suicide bombing is restricted on this map.\n");
     g_PlayerFuncs.ClientPrint(pPlayer, HUD_PRINTCENTER, "Suicide bombing restricted on this map\n");
     RemoveWait(steamId);
