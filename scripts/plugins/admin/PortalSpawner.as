@@ -1,4 +1,4 @@
-// PortalSpawner v7
+// PortalSpawner v8
 // https://forums.svencoop.com/showthread.php/43336-Portal-Spawner
 
 class PlayerState
@@ -461,6 +461,8 @@ void PluginInit()
 	g_Hooks.RegisterHook( Hooks::Player::ClientDisconnect, @ClientLeave );
 	g_Hooks.RegisterHook( Hooks::Game::MapChange, @MapChange );
 	
+	initLists();
+	
 	@g_autoload = CCVar("autoload", 1, "Enables automatic loading of portals when a map starts", ConCommandFlag::AdminOnly);
 	
 	g_Scheduler.SetInterval("portalThink", 0);
@@ -484,6 +486,31 @@ void MapInit()
 		g_Scheduler.SetTimeout("loadMapPortals", 2);
 }
 
+dictionary projectiles;
+void initLists()
+{
+	projectiles["grenade"] = true;
+	projectiles["playerhornet"] = true;
+	projectiles["rpg_rocket"] = true;
+	projectiles["bolt"] = true;
+	projectiles["grappletongue"] = true;
+	projectiles["displacer_portal"] = true;
+	projectiles["weaponbox"] = true;
+	projectiles["player"] = true;
+	projectiles["shock_beam"] = true;
+	projectiles["gonomespit"] = true;
+	projectiles["voltigoreshock"] = true;
+	projectiles["controller_energy_ball"] = true;
+	projectiles["controller_head_ball"] = true;
+	projectiles["hornet"] = true;
+	projectiles["squidspit"] = true;
+	projectiles["bmortar"] = true;
+	projectiles["garg_stomp"] = true;
+	projectiles["pitdronespike"] = true;
+	projectiles["hvr_rocket"] = true;
+	projectiles["kingpin_plasma_ball"] = true;
+}
+
 HookReturnCode MapChange()
 {
 	// set all menus to null. Apparently this fixes crashes for some people:
@@ -505,12 +532,10 @@ void println(string text) { print(text + "\n"); }
 // Will create a new state if the requested one does not exit
 PlayerState@ getPlayerState(CBasePlayer@ plr)
 {
-	string steamId = g_EngineFuncs.GetPlayerAuthId( plr.edict() );
-	if (steamId == 'STEAM_ID_LAN') {
-		steamId = plr.pev.netname;
-	}
+	string steamId = getPlayerUniqueId(plr);
+	PlayerState@ retState = cast<PlayerState@>( player_states[steamId] );
 	
-	if ( !player_states.exists(steamId) )
+	if ( retState is null )
 	{
 		PlayerState state;
 		state.plr = plr;
@@ -520,8 +545,27 @@ PlayerState@ getPlayerState(CBasePlayer@ plr)
 		state.deletePortal = -1;
 		state.menuPage = 0;
 		player_states[steamId] = state;
+		return state;
 	}
-	return cast<PlayerState@>( player_states[steamId] );
+	
+	return retState;
+}
+
+string getPlayerUniqueId(CBasePlayer@ plr)
+{
+	string steamId = g_EngineFuncs.GetPlayerAuthId( plr.edict() );
+	if (steamId == 'STEAM_ID_LAN') {
+		steamId = plr.pev.netname;
+	}
+	return steamId;
+}
+
+CBasePlayer@ getPlayerByUniqueId(string id)
+{
+	PlayerState@ state = cast<PlayerState@>(player_states[id]);
+	if (state !is null)
+		return cast<CBasePlayer@>(state.plr.GetEntity());
+	return null;
 }
 
 CBaseEntity@ createPortal(Vector origin, string spriteFile, string soundFile, float zoffset, bool spawnSound=true)
@@ -619,6 +663,8 @@ void removePortal(int idx)
 	for (uint i = 0; i < stateKeys.length(); i++)
 	{
 		PlayerState@ state = cast<PlayerState@>( player_states[stateKeys[i]] );
+		if (state is null)
+			continue;
 		if (state.editing == -1)
 			continue;
 		if (state.editing == idx) {
@@ -1053,6 +1099,31 @@ void portalMenuCallback(CTextMenu@ menu, CBasePlayer@ plr, int page, const CText
 		g_PlayerFuncs.SayText(plr, "All of your portals were removed\n");
 		state.removeConfirm = false;
 	}
+	else if (action.Find("kill-all-owner-") == 0)
+	{
+		string owner = action.SubString("kill-all-owner-".Length());
+		CBasePlayer@ ownerPlr = getPlayerByUniqueId(owner);
+		string playername = ownerPlr !is null ? string(ownerPlr.pev.netname) : "<unknown>";
+		bool unowned = ownerPlr is null;
+	
+		for (uint i = 0; i < portals.length(); i++)
+		{
+			if ((!unowned and portals[i].owner == owner) or (unowned and @getPlayerByUniqueId(portals[i].owner) == null))
+			{
+				removePortal(i);
+				i--;
+			}
+		}
+		
+		if (unowned)
+			g_PlayerFuncs.SayText(plr, "All unowned portals were removed\n");
+		else
+			g_PlayerFuncs.SayText(plr, "All of " + playername + "'s portals were removed\n");
+		if (ownerPlr !is null)
+			g_PlayerFuncs.SayText(ownerPlr, "All of your portals were removed by " + plr.pev.netname + "\n");
+		state.removeConfirm = false;
+	
+	}
 	else if (action == "save") 
 	{
 		g_PlayerFuncs.SayTextAll(plr, "" + plr.pev.netname + " saved map portals\n");
@@ -1309,14 +1380,7 @@ void portalThink()
 			@ent = g_EntityFuncs.FindEntityInSphere(ent, portalEnt.pev.origin, portalTouchRadius, "*", "classname"); 
 			if (ent !is null)
 			{
-				string cname = string(ent.pev.classname);
-				if (cname == "grenade" or cname == "playerhornet" or cname == "rpg_rocket" or 
-					cname == "bolt" or cname == "grappletongue" or cname == "displacer_portal" or
-					cname == "sporegrenade" or cname == "weaponbox" or cname == "player" or
-					cname == "shock_beam" or cname == "gonomespit" or cname == "voltigoreshock" or
-					cname == "controller_energy_ball" or cname == "controller_head_ball" or
-					cname == "hornet" or cname == "squidspit" or cname == "bmortar" or cname == "garg_stomp" or
-					cname == "pitdronespike" or cname == "hvr_rocket" or cname == "kingpin_plasma_ball")
+				if (projectiles.exists(ent.pev.classname))
 				{
 					teleportEnt(ent, int(i), Vector(0,0,0));
 				}
@@ -1376,6 +1440,8 @@ void portalThink()
 	for (uint i = 0; i < stateKeys.length(); i++)
 	{
 		PlayerState@ state = cast<PlayerState@>( player_states[stateKeys[i]] );
+		if (state is null or !state.plr.IsValid())
+			continue;
 		CBaseEntity@ plr = state.plr;
 		
 		if (state.editing != -1)
@@ -1585,6 +1651,21 @@ void openPortalMenu(CBasePlayer@ plr)
 		state.menu.AddItem("Yes", any("kill-all"));
 		state.menu.AddItem("No", any("kill-all-cancel"));
 		state.menu.AddItem("Only my portals", any("kill-all-owner"));
+		
+		dictionary names;
+		names[getPlayerUniqueId(plr)] = true;
+		for (uint i = 0; i < portals.size(); i++)
+		{
+			string ownerFormatted = getPortalOwnerName(plr, portals[i]);
+			string owner = portals[i].owner;
+			if (names.exists(owner)) {
+				continue;
+			}
+			names[owner] = true;
+			
+			state.menu.AddItem("Only " + ownerFormatted + " portals", any("kill-all-owner-" + owner));
+		}
+		
 	}
 	else if (state.editing != -1 and state.editing < int(portals.length())) // editing a portal
 	{

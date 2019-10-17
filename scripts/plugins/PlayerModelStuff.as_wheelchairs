@@ -3,7 +3,7 @@ const array<string> g_ModelList = {
 };
 
 const array<string> g_AdditionalModelList = {
-'greta'
+'partybear'
 };
 
 const array<string> g_WheelchairModelList = {
