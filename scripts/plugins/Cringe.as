@@ -1,4 +1,5 @@
-const array<string> g_ChangeEnts = { 'func_door', 'func_door_rotating', 'momentary_door', 'func_plat', 'func_platrot', 'func_rotating', 'func_train', 'func_pendulum', 'func_rot_button' };
+//const array<string> g_ChangeEnts = { 'func_door', 'func_door_rotating', 'momentary_door', 'func_plat', 'func_platrot', 'func_rotating', 'func_train', 'func_pendulum', 'func_rot_button' };
+const array<string> g_ChangeEnts = { 'func_door' };
 
 void PluginInit() {
   g_Module.ScriptInfo.SetAuthor("incognico");
@@ -19,7 +20,7 @@ void MapStart() {
 
 HookReturnCode PlayerKilled(CBasePlayer@ pPlayer, CBaseEntity@ pAttacker, int iGib) {
   if (pAttacker !is null && g_ChangeEnts.find(pAttacker.GetClassname()) >= 0)
-     g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "[Cringe] " + pPlayer.pev.netname + " was killed by a " + pAttacker.GetClassname() + ".\n");
+     g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "[LOL] " + pPlayer.pev.netname + " was killed by a " + pAttacker.GetClassname() + ".\n");
 
   return HOOK_CONTINUE;
 }

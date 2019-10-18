@@ -292,12 +292,14 @@ void KillHelper( EHandle& in helper ) {
 }
 
 void SolidThink() {
-    array<uint> toremove;
+    array<EHandle> tokeep;
 
     for ( uint i = 0; i < g_Helpers.length(); ++i ) {
         if ( !g_Helpers[i].IsValid() ) {
-            toremove.insertLast( i );
             continue;
+        }
+        else {
+            tokeep.insertLast( g_Helpers[i] );
         }
 
         CBaseEntity@ toggleme = g_Helpers[i].GetEntity();
@@ -310,10 +312,7 @@ void SolidThink() {
         }
     }
 
-    for ( uint i = 0; i < toremove.length(); ++i ) {
-        g_Helpers.removeAt( toremove[i] );
-    }
-
+    g_Helpers = tokeep;
     g_SolidState = !g_SolidState;
 }
 
