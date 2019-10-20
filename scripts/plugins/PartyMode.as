@@ -126,7 +126,7 @@ void PopRenderMode(CBaseEntity@ pEnt) {
   pEnt.pev.rendercolor = pCustom.GetKeyvalue(g_KeyColor).GetVector();
 }
 
-void setRenderMode(CBaseEntity@ pEnt, int rendermode, int renderfx, int renderamt, Vector color) {
+void setRenderMode(CBaseEntity@ pEnt, int rendermode, int renderfx, float renderamt, Vector color) {
   pEnt.pev.rendermode = rendermode;
   pEnt.pev.renderfx = renderfx;
   pEnt.pev.renderamt = renderamt;

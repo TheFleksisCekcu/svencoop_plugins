@@ -644,8 +644,8 @@ final class Diffy {
 			CBaseEntity@ ent = g_EntityFuncs.Instance( i );
 			
 			if( ent !is null ) {
-				if(ent.pev.health <= 0.0 || ent.pev.health >= 100000.0) continue;
-				
+				if( ent.pev.health <= 0.0 || ent.pev.health >= 100000.0 || ent.Classify() == CLASS_PLAYER_ALLY ) continue;
+
 				if ( ent.pev.classname == "monster_alien_babyvoltigore" ){
 					ent.pev.health = getSkValue(118)/3.0f;
 				}else if ( ent.pev.classname == "monster_alien_controller" ){
