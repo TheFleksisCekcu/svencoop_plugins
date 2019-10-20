@@ -71,7 +71,7 @@ class BadPresent : ScriptBaseItemEntity {
                 };
 
                 g_EntityFuncs.CreateEntity( "monster_handgrenade", keyvalues );
-                g_Scheduler.SetTimeout( "KillHelper", 1, EHandle( pPlayer ) );
+                g_Scheduler.SetTimeout( "KillHelper", 2, EHandle( pPlayer ) );
             }
         }
         else {

@@ -12,7 +12,8 @@ const array<string> g_MapBlacklist = {
 'shitty_pubg',
 'spaceinvaders',
 'th_escape',
-'uboa'
+'uboa',
+'zombie_nights_v7'
 };
 
 bool MapBlacklisted() {
