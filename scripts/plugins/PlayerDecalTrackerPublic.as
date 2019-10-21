@@ -21,7 +21,7 @@ void MapInit()
 
 namespace PlayerDecalTracker
 {
-const uint g_uiMaxDecals = 64;		//Maximum number of decals to track at any given time
+const uint g_uiMaxDecals = 128;		//Maximum number of decals to track at any given time
 
 const float g_flLifetime = 540;		//How long a given decal should be tracked
 
