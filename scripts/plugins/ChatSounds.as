@@ -135,7 +135,7 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
       else {
         if (soundArg == 'medic' || soundArg == 'meedic') {
           pPlayer.ShowOverheadSprite('sprites/saveme.spr', 51.0f, 3.5f);
-          g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_AUTO, string(g_SoundList[soundArg]), 1.0f, 0.2f, 0, Math.RandomLong(50, 175), 0, true, pPlayer.pev.origin);
+          g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_AUTO, string(g_SoundList[soundArg]), 1.0f, 0.2f, 0, Math.RandomLong(35, 220), 0, true, pPlayer.pev.origin);
         }
         else {
           pPlayer.ShowOverheadSprite(Math.RandomLong(0, 1) == 0 ? g_SpriteName : g_SpriteName2, 56.0f, 2.25f);
