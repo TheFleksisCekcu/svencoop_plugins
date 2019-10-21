@@ -218,6 +218,8 @@ void idletestfunc(){
           pPlayer.pev.origin.y > 384 && pPlayer.pev.origin.y < 960 &&
           pPlayer.pev.origin.z > -1400 && pPlayer.pev.origin.z < -1000
       ) maxIdle = 3;
+
+      if(sMap == "botparty") maxIdle = 9999;
       
 			if (valuePlayerIdle.GetInteger() >= maxIdle ){
 				pCustom.SetKeyvalue( g_KeyIdleTime, 0);
