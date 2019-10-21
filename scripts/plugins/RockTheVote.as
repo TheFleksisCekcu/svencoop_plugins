@@ -357,7 +357,7 @@ HookReturnCode ResetVars()
   @g_TimeToVote = null;
   @g_TimeUntilVote = null;
 
-  prevmaps.insertLast(g_Engine.mapname);
+  prevmaps.insertLast(string(g_Engine.mapname).ToLowercase());
   if ( (int(prevmaps.length()) > g_ExcludePrevMaps.GetInt()))
     prevmaps.removeAt(0);
 
@@ -520,7 +520,7 @@ void RtvPush(const CCommand@ pArguments, CBasePlayer@ pPlayer)
     else
     {
 
-      MessageWarnAllPlayers(pPlayer, "RTV will enable in " + g_SecondsUntilVote.GetInt() + " seconds." );
+      MessageWarnAllPlayers( "RTV will enable in " + g_SecondsUntilVote.GetInt() + " seconds." );
 
     }
 
@@ -550,7 +550,7 @@ void RtvPush(const CCommand@ pArguments)
     else
     {
 
-      MessageWarnAllPlayers(pPlayer, "RTV will enable in " + g_SecondsUntilVote.GetInt() + " seconds." );
+      MessageWarnAllPlayers( "RTV will enable in " + g_SecondsUntilVote.GetInt() + " seconds." );
 
     }
 
@@ -727,7 +727,7 @@ void RemoveNominateMap(const CCommand@ pArguments)
             if (rtv_plr_data[i].szNominatedMap == pArguments.Arg(1))
               {
 
-                MessageWarnAllPlayers(pPlayer, string(rtv_plr_data[i].szPlayerName + " has removed " + rtv_plr_data[i].szPlayerName + " nomination of " + rtv_plr_data[i].szNominatedMap));
+                MessageWarnAllPlayers( string(rtv_plr_data[i].szPlayerName + " has removed " + rtv_plr_data[i].szPlayerName + " nomination of " + rtv_plr_data[i].szNominatedMap));
                 rtv_plr_data[i].szNominatedMap = "";
 
               }
@@ -758,24 +758,7 @@ void CancelVote(const CCommand@ pArguments)
 
   ClearRTV();
 
-  MessageWarnAllPlayers(pPlayer, "The vote has been cancelled by " + string(rtvdataobj.szPlayerName) );
-
-}
-
-CBasePlayer@ PickRandomPlayer()
-{
-
-  CBasePlayer@ pPlayer;
-  for (int i = 1; i <= g_Engine.maxClients; i++)
-  {
-
-    @pPlayer = g_PlayerFuncs.FindPlayerByIndex(i);
-    if ( pPlayer !is null && pPlayer.IsConnected() )
-      break;
-
-  }
-
-  return @pPlayer;
+  MessageWarnAllPlayers( "The vote has been cancelled by " + string(rtvdataobj.szPlayerName) );
 
 }
 
@@ -786,10 +769,10 @@ void MessageWarnPlayer(CBasePlayer@ pPlayer, string msg)
 
 }
 
-void MessageWarnAllPlayers(CBasePlayer@ pPlayer, string msg)
+void MessageWarnAllPlayers(string msg)
 {
 
-  g_PlayerFuncs.SayTextAll( pPlayer, "[RTV] " + msg + "\n");
+  g_PlayerFuncs.ClientPrintAll( HUD_PRINTTALK, "[RTV] " + msg + "\n" );
 
 }
 
@@ -810,7 +793,7 @@ void NominateMap( CBasePlayer@ pPlayer, string szMapName )
 
   }
 
-  if (prevmaps.find( szMapName ) >= 0)
+  if ( prevmaps.find( szMapName ) >= 0)
   {
 
     MessageWarnPlayer( pPlayer, "Map has already been played and will be excluded until later.");
@@ -834,6 +817,14 @@ void NominateMap( CBasePlayer@ pPlayer, string szMapName )
 
   }
 
+  if ( string( g_Engine.mapname ).ToLowercase() == szMapName )
+  {
+
+    MessageWarnPlayer( pPlayer, "Can't nominate the current map.");
+    return;
+
+  }
+
   if ( int(mapsNominated.length()) > g_MaxMapsToVote.GetInt() )
   {
 
@@ -845,7 +836,7 @@ void NominateMap( CBasePlayer@ pPlayer, string szMapName )
   if ( rtvdataobj.szNominatedMap.IsEmpty() )
   {
 
-    MessageWarnAllPlayers( pPlayer, rtvdataobj.szPlayerName + " has nominated \"" + szMapName + "\"." );
+    MessageWarnAllPlayers( rtvdataobj.szPlayerName + " has nominated \"" + szMapName + "\"." );
     rtvdataobj.szNominatedMap = szMapName;
     return;
 
@@ -853,7 +844,7 @@ void NominateMap( CBasePlayer@ pPlayer, string szMapName )
   else
   {
 
-    MessageWarnAllPlayers( pPlayer, rtvdataobj.szPlayerName + " has changed their nomination to \"" + szMapName + "\". " );
+    MessageWarnAllPlayers( rtvdataobj.szPlayerName + " has changed their nomination to \"" + szMapName + "\". " );
     rtvdataobj.szNominatedMap = szMapName;
     return;
 
@@ -927,7 +918,7 @@ void RockTheVote(CBasePlayer@ pPlayer)
 
     rtvdataobj.bHasRTV = true;
     MessageWarnPlayer(pPlayer,"You have Rocked the Vote!");
-    MessageWarnAllPlayers(pPlayer,"" + GetRTVd() + " of " + rtvRequired + " players until vote initiates!");
+    MessageWarnAllPlayers("" + GetRTVd() + " of " + rtvRequired + " players until vote initiates!");
 
   }
 
@@ -960,7 +951,7 @@ void VoteMenu(array<string> rtvList)
 {
 
   canRTV = true;
-  MessageWarnAllPlayers( PickRandomPlayer(), "You have " + g_VotingPeriodTime.GetInt() + " seconds to vote!");
+  MessageWarnAllPlayers( "You have " + g_VotingPeriodTime.GetInt() + " seconds to vote!");
 
   @rtvmenu = CTextMenu(@rtv_MenuCallback);
   rtvmenu.SetTitle("RTV Vote");
@@ -1117,7 +1108,7 @@ void PostVote()
   {
 
     string chosenMap = RandomMap();
-    MessageWarnAllPlayers( PickRandomPlayer(), "\"" + chosenMap +"\" has been randomly chosen since nobody picked");
+    MessageWarnAllPlayers( "\"" + chosenMap +"\" has been randomly chosen since nobody picked");
     ChooseMap(chosenMap, false);
     return;
 
@@ -1146,7 +1137,7 @@ void PostVote()
     {
 
       ClearVotedMaps();
-      MessageWarnAllPlayers( PickRandomPlayer(), "There was a tie! Revoting...");
+      MessageWarnAllPlayers( "There was a tie! Revoting...");
       @g_TimeToVote = g_Scheduler.SetInterval("DecrementVoteSeconds", 1, g_VotingPeriodTime.GetInt() + 1);
       VoteMenu(candidates);
       return;
@@ -1156,7 +1147,7 @@ void PostVote()
     {
 
       string chosenMap = RandomMap(candidates);
-      MessageWarnAllPlayers( PickRandomPlayer(), "\"" + chosenMap +"\" has been randomly chosen amongst the tied");
+      MessageWarnAllPlayers( "\"" + chosenMap +"\" has been randomly chosen amongst the tied");
       ChooseMap(chosenMap, false);
       return;
 
@@ -1167,7 +1158,7 @@ void PostVote()
       ClearVotedMaps();
       ClearRTV();
 
-      MessageWarnAllPlayers( PickRandomPlayer(), "There was a tie! Please RTV again...");
+      MessageWarnAllPlayers( "There was a tie! Please RTV again...");
 
     }
     else
@@ -1176,7 +1167,7 @@ void PostVote()
   else
   {
 
-    MessageWarnAllPlayers( PickRandomPlayer(), "\"" + candidates[0] +"\" has been chosen!");
+    MessageWarnAllPlayers( "\"" + candidates[0] +"\" has been chosen!");
     ChooseMap(candidates[0], false);
     return;
 
@@ -1220,7 +1211,7 @@ void ChooseMap(string chosenMap, bool forcechange)
 
     g_EngineFuncs.ServerCommand("mp_nextmap "+ chosenMap + "\n");
     g_EngineFuncs.ServerCommand("mp_nextmap_cycle "+ chosenMap + "\n");
-    MessageWarnAllPlayers( PickRandomPlayer(), "Next map has been set to \"" + chosenMap + "\".");
+    MessageWarnAllPlayers( "Next map has been set to \"" + chosenMap + "\".");
 
   }
 
