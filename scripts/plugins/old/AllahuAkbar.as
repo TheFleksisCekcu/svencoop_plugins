@@ -100,6 +100,10 @@ void RemoveWait(const string steamId) {
 
 void SatchelCharge(EHandle& in ent) {
   CBaseEntity@ pSatchel = null;
+
+  if (!ent.IsValid())
+    return;
+
   @pSatchel = ent.GetEntity();
 
   CBaseEntity@ pPlayer = g_EntityFuncs.Instance(pSatchel.pev.owner);
@@ -114,6 +118,9 @@ void SatchelCharge(EHandle& in ent) {
 }
 
 void TimeClusterBomb(EHandle& in plrEnt) {
+  if (!plrEnt.IsValid())
+    return;
+
   if (g_pThinkFunc !is null)
     g_Scheduler.RemoveTimer(g_pThinkFunc);
 
@@ -121,6 +128,9 @@ void TimeClusterBomb(EHandle& in plrEnt) {
 }
 
 void ClusterBomb(EHandle& in plrEnt) {
+  if (!plrEnt.IsValid())
+    return;
+
   CBaseEntity@ pPlayer = plrEnt.GetEntity();
 
   //g_EntityFuncs.CreateExplosion(pPlayer.pev.origin, Vector(-90, 0, 0), pPlayer.edict(), Math.RandomLong(25, 125), true);
@@ -128,13 +138,19 @@ void ClusterBomb(EHandle& in plrEnt) {
 }
 
 void KillPlayer(EHandle& in plrEnt) {
+  if (!plrEnt.IsValid())
+    return;
+
   CBaseEntity@ pPlayer = plrEnt.GetEntity();
 
-  if (pPlayer.IsAlive())
+  if (pPlayer !is null && pPlayer.IsAlive())
     pPlayer.TakeDamage(g_EntityFuncs.Instance(0).pev, g_EntityFuncs.Instance(0).pev, 9999.0f, DMG_BLAST);
 }
 
 HookReturnCode WeaponTertiaryAttack(CBasePlayer@ pPlayer, CBasePlayerWeapon@ wep) {
+  if (wep is null)
+    return HOOK_CONTINUE;
+
   if (wep.GetClassname() != "weapon_satchel") {
     return HOOK_CONTINUE;
   }
