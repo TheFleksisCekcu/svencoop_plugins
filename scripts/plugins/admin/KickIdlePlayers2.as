@@ -171,6 +171,7 @@ void idletestfunc(){
 	if(m_sMap == "of0a0") return;
 	if(m_sMap == "th_ep1_00") return;
 	if(m_sMap == "dy_outro") return;
+	if(m_sMap == "botparty") return;
 	
   int plyCnt = 0;
   int g_maxplayersAFK = 29;
@@ -219,8 +220,6 @@ void idletestfunc(){
           pPlayer.pev.origin.z > -1400 && pPlayer.pev.origin.z < -1000
       ) maxIdle = 3;
 
-      if(sMap == "botparty") maxIdle = 9999;
-      
 			if (valuePlayerIdle.GetInteger() >= maxIdle ){
 				pCustom.SetKeyvalue( g_KeyIdleTime, 0);
         if(totalVal > g_maxTotalKick){

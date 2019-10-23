@@ -181,10 +181,11 @@ void HUDInfoThink()
 
 void DisplayHUDInfo( CBasePlayer@ pPlayer, CBaseEntity@ pEntity )
 {
-	if ( !pEntity.IsBreakable() )
+	if (pEntity is null || !pEntity.IsBreakable())
 		return;
 
-	string szClassname = pEntity.GetClassname();
+	string szClassname = "";
+   szClassname = pEntity.GetClassname();
 	if ( szClassname == "func_breakable" )
 	{
 		int iSpawnFlags = pEntity.pev.spawnflags;
