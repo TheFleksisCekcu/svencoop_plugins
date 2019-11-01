@@ -15,7 +15,8 @@ const array<string> g_CrashModelList = {
 'gargantua',
 'owatarobo',
 'owatarobo_s',
-'tomb_raider'
+'tomb_raider',
+'vehicleshit_submarine'
 };
 
 const int g_MaxVotes = 3;
