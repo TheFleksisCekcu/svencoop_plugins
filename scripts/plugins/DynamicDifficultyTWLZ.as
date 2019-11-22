@@ -1394,7 +1394,7 @@ void MapInit(){
 void MapActivate(){
 	g_diffy.mapStartDiffy();
 
-	if(!g_diffy.m_ignore_diff){
+	if(!g_diffy.m_ignore_diff && g_Engine.mapname != "hl_c13_a3"){
 		OverrideMapCfg();
 	}
 }
