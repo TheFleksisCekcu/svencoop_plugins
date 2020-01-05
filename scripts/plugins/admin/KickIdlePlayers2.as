@@ -3,7 +3,7 @@ CScheduledFunction@ g_pIdleTestFunc = null;
 const string g_KeyIdleTime = "$i_idletime";
 const string g_KeyIdleAFKSign = "$i_afk_sign";
 const string g_KeyIdleOrg = "$v_idleorg";
-const int g_maxplayersAFK = 28;
+const int g_maxplayersAFK = 27;
 const int g_maxTotalKick = 599;
 
 
@@ -174,7 +174,7 @@ void idletestfunc(){
 	if(m_sMap == "botparty") return;
 	
   int plyCnt = 0;
-  int g_maxplayersAFK = 29;
+  int g_maxplayersAFK = 27;
   
 	for( int i = 1; i <= g_Engine.maxClients; ++i )	{
 		CBasePlayer@ pPlayer = g_PlayerFuncs.FindPlayerByIndex( i );
@@ -211,7 +211,7 @@ void idletestfunc(){
       
       int totalVal = g_PlayerData[idx].getTotal();
       int maxIdle = 180;
-      if(totalVal > 0) maxIdle = 120;
+      if(totalVal > 0) maxIdle = 100;
       
       if(
           m_sMap == "hl_c08_a2" &&
