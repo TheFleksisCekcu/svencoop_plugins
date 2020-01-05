@@ -25,6 +25,14 @@ void PluginInit() {
   MapStart();
 }
 
+void PluginExit() {
+  if ( f_FromSven !is null && f_FromSven.IsOpen() )
+    f_FromSven.Close();
+
+  if ( f_ToSven !is null && f_ToSven.IsOpen() )
+    f_ToSven.Close();
+}
+
 void MapStart() {
   TruncateFromSven();
 

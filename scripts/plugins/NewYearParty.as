@@ -7,7 +7,7 @@ const string g_Sprite3s = "sprites/txas/zerogxplode.spr";
 const string g_SoundLong = "egyptesc/fireworks.wav";
 const string g_SoundShort = "weapons/fireworks.wav";
 
-const float from = 1577836799.0f;
+const float from = 1577833199.0f;
 const float to = 1577836891.0f;
 
 bool bg = false;
@@ -42,26 +42,27 @@ void MapInit() {
 }
 
 void Fireworks() {
-  if (!(g_EngineFuncs.Time() >= from && g_EngineFuncs.Time() <= to))
+  //if (!(g_EngineFuncs.Time() >= from && g_EngineFuncs.Time() <= to))
+  if (g_Engine.mapname != "road_to_shinnen")
     return;
 
-  if(!bg) {
+  if (!bg) {
     g_SoundSystem.PlaySound(g_EntityFuncs.IndexEnt(0), CHAN_STATIC, g_SoundLong, 1.0f, 0.0f, 0, 100, 0);
-	bg = true;
+    bg = true;
   }
 
   for (int i = 1; i <= g_Engine.maxClients; ++i) {
     CBasePlayer@ pPlayer = g_PlayerFuncs.FindPlayerByIndex(i);
-	
-	if (pPlayer !is null && pPlayer.IsConnected()) {
-	  if(Math.RandomLong(0, 3) == 0) {
-	    OverheadSprite(pPlayer.pev.origin, g_Sprite3);
-	  }
-	  else {
-		OverheadSprite(pPlayer.pev.origin, Math.RandomLong(0, 1) == 0 ? g_Sprite1 : g_Sprite2);
-	    g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_AUTO, g_SoundShort, 1.0f, 0.2f, 0, Math.RandomLong(45, 255), 0, true, pPlayer.pev.origin);
-	  }
-	}
+  
+    if (pPlayer !is null && pPlayer.IsConnected()) {
+      if(Math.RandomLong(0, 3) == 0) {
+        OverheadSprite(pPlayer.pev.origin, g_Sprite3);
+      }
+      else {
+        OverheadSprite(pPlayer.pev.origin, Math.RandomLong(0, 1) == 0 ? g_Sprite1 : g_Sprite2);
+        g_SoundSystem.PlaySound(pPlayer.edict(), CHAN_AUTO, g_SoundShort, 0.5f, 0.2f, 0, Math.RandomLong(45, 255), 0, true, pPlayer.pev.origin);
+      }
+    }
   }
 }
 

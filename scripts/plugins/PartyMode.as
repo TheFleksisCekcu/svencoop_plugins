@@ -41,9 +41,6 @@ HookReturnCode MapChange() {
 HookReturnCode ClientSay(SayParameters@ pParams) {
   const CCommand@ pArguments = pParams.GetArguments();
 
-  if (g_Engine.mapname == "rust_island_b5")
-    return HOOK_HANDLED;
-
   if (pArguments.ArgC() > 0 && (pArguments.Arg(0).ToLowercase() == "party?" || pArguments.Arg(0).ToLowercase() == "partymode" || pArguments.Arg(0).ToLowercase() == "partymode?")) {
     if (g_LastVoteTime != 0 && (uint(g_EngineFuncs.Time()) - g_LastVoteTime) < g_VoteWaitTime) {
       g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "[Info] Calm down, there was a vote little time ago already.\n");
