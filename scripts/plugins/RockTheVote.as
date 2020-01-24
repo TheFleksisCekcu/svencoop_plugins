@@ -480,7 +480,7 @@ void DecrementVoteSeconds()
     secondsleftforvote--;
 
   }
-  else if (secondsleftforvote == 0 && g_PlaySounds.GetBool())
+  else if (secondsleftforvote == 0)
   {
 
     PostVote();
@@ -621,6 +621,8 @@ void ForceVote(const CCommand@ pArguments, CBasePlayer@ pPlayer)
   }
   else if (pArguments.ArgC() == 1)
   {
+    g_Scheduler.RemoveTimer(@g_TimeToVote);
+    CScheduledFunction@ g_TimeToVote = null;
 
     BeginVote();
     @g_TimeToVote = g_Scheduler.SetInterval("DecrementVoteSeconds", 1, g_VotingPeriodTime.GetInt() + 1);
