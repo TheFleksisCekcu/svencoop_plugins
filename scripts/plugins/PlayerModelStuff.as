@@ -13,6 +13,7 @@ const array<string> g_CrashModelList = {
 'friendlygarg',
 'garg',
 'gargantua',
+'onos',
 'owatarobo',
 'owatarobo_s',
 'tomb_raider',
@@ -198,7 +199,7 @@ void CrashModelCheck() {
     if (pPlayer !is null) {
       KeyValueBuffer@ pInfos = g_EngineFuncs.GetInfoKeyBuffer(pPlayer.edict());
 
-      if (g_CrashModelList.find(pInfos.GetValue("model")) >= 0) {
+      if (g_CrashModelList.find(pInfos.GetValue("model").ToLowercase()) >= 0) {
         g_PlayerFuncs.ClientPrint(pPlayer, HUD_PRINTTALK, "[Warning] Don\'t use player model \'" + pInfos.GetValue("model") + "\', it is prone to crash or obscures views!\n");
         pInfos.SetValue("model", g_ClimateChangeModelList[Math.RandomLong(0, g_ClimateChangeModelList.length()-1)]);
       }
