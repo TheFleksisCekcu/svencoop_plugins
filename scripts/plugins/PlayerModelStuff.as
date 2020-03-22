@@ -3,13 +3,15 @@ const array<string> g_AdditionalModelList = {
 };
 
 const array<string> g_CoronaModelList = {
-'corona_chan'
+'corona_chan',
+'pepe_hazmat'
 };
 
 const array<string> g_CrashModelList = {
 'apacheshit',
 'axis2_s5',
 'big_mom',
+'bmrftruck',
 'friendlygarg',
 'garg',
 'gargantua',
@@ -156,7 +158,10 @@ void ForceCorona(bool msg) {
         g_OriginalModelList.set(SteamId, pInfos.GetValue("model"));
 
       if (g_CoronaModelList.find(pInfos.GetValue("model")) < 0) {
-        pInfos.SetValue("model", g_CoronaModelList[Math.RandomLong(0, g_CoronaModelList.length()-1)]);
+        pInfos.SetValue("model", g_CoronaModelList[1]);
+
+        if (Math.RandomLong(0, 4) == 0)
+          pInfos.SetValue("model", g_CoronaModelList[0]);
  
         if (msg)
           g_PlayerFuncs.ClientPrint(pPlayer, HUD_PRINTTALK, "[Info] You can not be cured so quickly!\n");
