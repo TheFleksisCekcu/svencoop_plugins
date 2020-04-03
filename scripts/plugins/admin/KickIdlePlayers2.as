@@ -211,7 +211,7 @@ void idletestfunc(){
       
       int totalVal = g_PlayerData[idx].getTotal();
       int maxIdle = 180;
-      if(totalVal > 0) maxIdle = 100;
+      if(totalVal > 0) maxIdle = 120;
       
       if(
           m_sMap == "hl_c08_a2" &&

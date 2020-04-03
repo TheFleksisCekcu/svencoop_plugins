@@ -15,6 +15,7 @@ const array<string> g_CrashModelList = {
 'friendlygarg',
 'garg',
 'gargantua',
+'gonach',
 'onos',
 'owatarobo',
 'owatarobo_s',
