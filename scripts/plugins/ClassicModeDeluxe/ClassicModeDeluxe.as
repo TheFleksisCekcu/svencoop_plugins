@@ -199,12 +199,17 @@ void MapInit()
 	classicTrigger.Think();
 	g_EntityFuncs.FireTargets("ClassicModeDeluxeTrigger", classicTrigger, classicTrigger, USE_ON, 0.0f);
 	
-	brokenInstall = classicTrigger.pev.renderfx != 1;
-	if (brokenInstall) {
-		println("ClassicModeDeluxe: Map script failed to load. Did you install the custom default_map_settings.cfg?");
-	}
+	bool restartRequired = classicTrigger.pev.renderfx == 2;
+	brokenInstall = classicTrigger.pev.renderfx != 1 && !restartRequired;
 	
 	g_EntityFuncs.Remove(classicTrigger);
+	
+	if (brokenInstall) {
+		println("ClassicModeDeluxe: Map script failed to load. Did you install the custom default_map_settings.cfg?");
+	} else if (restartRequired) {
+		println("ClassicModeDeluxe: Map script loaded. Restarting map to toggle classic mode.");
+		g_EngineFuncs.ChangeLevel(g_Engine.mapname);
+	}	
 }
 
 void MapActivate()
@@ -251,7 +256,7 @@ bool doCommand(CBasePlayer@ plr, const CCommand@ args)
 				string arg = args[1].ToLowercase();
 				if (arg == "version")
 				{
-					g_PlayerFuncs.SayText(plr, "Classic mode version: v5\n");
+					g_PlayerFuncs.SayText(plr, "Classic mode version: v8\n");
 					return true;
 				}
 				if (g_PlayerFuncs.AdminLevel(plr) < ADMIN_YES)
@@ -318,6 +323,14 @@ bool doCommand(CBasePlayer@ plr, const CCommand@ args)
 		}
 	}
 	return false;
+}
+
+CClientCommand _cm("cm", "Classic Mode", @cmCommand );
+
+void cmCommand( const CCommand@ args )
+{
+	CBasePlayer@ plr = g_ConCommandSystem.GetCurrentPlayer();
+	doCommand(plr, args);
 }
 
 HookReturnCode ClassicModeDeluxeSay( SayParameters@ pParams )

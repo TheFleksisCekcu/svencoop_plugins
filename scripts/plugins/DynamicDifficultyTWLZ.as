@@ -34,6 +34,7 @@ final class Diffy {
 			0.998, //30
 			0.999, //31
 			0.999  //32
+         // see m_gaussDiff for gaussjumping
 	};
 	
 	/**
@@ -411,6 +412,11 @@ final class Diffy {
 	* How often does the same map needs to restart.
 	*/
 	private int m_Fails = 0;
+	
+   /**
+	* Diff limit for gaussjumping to enable
+	*/
+	private int m_gaussDiff = 997;
 	
 	/**
 	* What was the name of the last map?
@@ -814,11 +820,11 @@ final class Diffy {
 	//Mode 2 = Count people and Fails
 	//Mode 3 = Disabled
 	void changeMessage(int mode){
-		int difficultInt = int(m_fl_difficulty*1000.0+0.5);
-		string aStr = "DIFFICULTY: Current: "+(difficultInt/10)+"."+(difficultInt%10)+" percent ";
+		string aStr = "DIFFICULTY: Current: "+(getDiffInt()/10)+"."+(getDiffInt()%10)+" percent ";
 		
 		string bStr = "";
 		string cStr = "";
+		string dStr = " Gaussjump: ";
 		
 		if(m_fl_difficulty<0.0005)
 			bStr = "(Lowest Difficulty)";
@@ -874,8 +880,14 @@ final class Diffy {
 			cStr = " (Disabled on this map)";
 			break;
 		}
-		
-		s_message = aStr+bStr+cStr;
+
+      if(getDiffInt() >= m_gaussDiff){
+         dStr = dStr + "on";
+      }else{
+         dStr = dStr + "off";
+      }
+
+		s_message = aStr+bStr+cStr+dStr;
 	}
 	
 	void calculateSkills(){
@@ -1345,6 +1357,14 @@ final class Diffy {
 	double getDiff() {
 		return m_fl_difficulty;
 	}
+
+   int getDiffInt() {
+      return int(m_fl_difficulty*1000.0+0.5);
+   }
+
+	int getGaussDiff() {
+		return m_gaussDiff;
+	}
 }
 
 Diffy@ g_diffy;
@@ -1429,9 +1449,9 @@ HookReturnCode ClientSay2( SayParameters@ pParams ){
 		g_PlayerFuncs.ClientPrintAll( HUD_PRINTTALK, aStr );
 	}
 
-   if (str == "DIFF") {
-      return HOOK_HANDLED;
-   }
+	if (str == "DIFF") {
+		return HOOK_HANDLED;
+	}
 
 	return HOOK_CONTINUE;
 }
@@ -1449,17 +1469,17 @@ HookReturnCode PlayerKilled( CBasePlayer@ pPlayer, CBaseEntity@, int iGib ){
 
 // put the diff value in the hostname
 void AppendHostname(){
-        int difficultInt = int(g_diffy.getDiff()*1000.0+0.5);
-
-	if (difficultInt > 700) {
-		string dStr = "" + string(difficultInt/10) + "." + string(difficultInt%10) + "%";
+	if(g_diffy.getDiffInt() > 700) {
+		string dStr = "" + string(g_diffy.getDiffInt()/10) + "." + string(g_diffy.getDiffInt()%10) + "%";
 		string hostnamenew = "hostname \"" + hostname + " | difficulty: " + dStr + "\"\n";
 		g_EngineFuncs.ServerCommand(hostnamenew);
 	}
 }
 
-// allow gaussjumping
+// gaussjumping
 void OverrideMapCfg(){
-	g_EngineFuncs.ServerCommand("mp_disablegaussjump 0\n");
-	g_EngineFuncs.ServerExecute();
+	if (g_diffy.getDiffInt() >= g_diffy.getGaussDiff()) {
+		g_EngineFuncs.ServerCommand("mp_disablegaussjump 0\n");
+		g_EngineFuncs.ServerExecute();
+	}
 }
