@@ -2,39 +2,39 @@ final class Diffy {
 
 	private array<double> diffPerPeep = {
 			0.700, //0
-			0.700, //1
-			0.750, //2
-			0.800, //3
-			0.810, //4
-			0.820, //5
-			0.830, //6
-			0.840, //7
-			0.850, //8
-			0.860, //9
-			0.870, //10
-			0.880, //11
-			0.890, //12
-			0.900, //13
-			0.910, //14
-			0.920, //15
-			0.930, //16
-			0.940, //17
-			0.950, //18
-			0.960, //19
-			0.970, //20
-			0.980, //21
-			0.990, //22
-			0.991, //23
-			0.992, //24
-			0.993, //25
-			0.994, //26
-			0.995, //27
-			0.996, //28
-			0.997, //29
-			0.998, //30
+			0.750, //1
+			0.800, //2
+			0.815, //3
+			0.830, //4
+			0.840, //5
+			0.850, //6
+			0.860, //7
+			0.870, //8
+			0.880, //9
+			0.890, //10
+			0.900, //11
+			0.910, //12
+			0.920, //13
+			0.930, //14
+			0.940, //15
+			0.950, //16
+			0.960, //17
+			0.970, //18
+			0.980, //19
+			0.990, //20
+			0.991, //21
+			0.992, //22
+			0.993, //23
+			0.994, //24
+			0.995, //25
+			0.996, //26
+			0.997, //27
+			0.998, //28
+			0.999, //29
+			0.999, //30
 			0.999, //31
 			0.999  //32
-         // see m_gaussDiff for gaussjumping
+			// see m_gaussDiff for gaussjumping
 	};
 	
 	/**
@@ -413,10 +413,10 @@ final class Diffy {
 	*/
 	private int m_Fails = 0;
 	
-   /**
-	* Diff limit for gaussjumping to enable
+	/**
+	* Diff limit for gaussjumping to enable (int)
 	*/
-	private int m_gaussDiff = 997;
+	private int m_gaussDiff = 995;
 	
 	/**
 	* What was the name of the last map?
@@ -881,11 +881,11 @@ final class Diffy {
 			break;
 		}
 
-      if(getDiffInt() >= m_gaussDiff){
-         dStr = dStr + "on";
-      }else{
-         dStr = dStr + "off";
-      }
+		if(getDiffInt() >= m_gaussDiff){
+			dStr = dStr + "on";
+		}else{
+			dStr = dStr + "off";
+		}
 
 		s_message = aStr+bStr+cStr+dStr;
 	}
@@ -1358,9 +1358,9 @@ final class Diffy {
 		return m_fl_difficulty;
 	}
 
-   int getDiffInt() {
-      return int(m_fl_difficulty*1000.0+0.5);
-   }
+	int getDiffInt() {
+		return int(m_fl_difficulty*1000.0+0.5);
+	}
 
 	int getGaussDiff() {
 		return m_gaussDiff;
@@ -1480,6 +1480,9 @@ void AppendHostname(){
 void OverrideMapCfg(){
 	if (g_diffy.getDiffInt() >= g_diffy.getGaussDiff()) {
 		g_EngineFuncs.ServerCommand("mp_disablegaussjump 0\n");
-		g_EngineFuncs.ServerExecute();
 	}
+	else {
+		g_EngineFuncs.ServerCommand("mp_disablegaussjump 1\n");
+	}
+	g_EngineFuncs.ServerExecute();
 }

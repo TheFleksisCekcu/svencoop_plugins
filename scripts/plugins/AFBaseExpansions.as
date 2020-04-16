@@ -6,7 +6,7 @@
 #include "AFBaseExpansions/AF2EKI"
 #include "AFBaseExpansions/AF2Menu"
 #include "AFBaseExpansions/hats"
-#include "AFBaseExpansions/hookmod"
+//#include "AFBaseExpansions/hookmod"
 
 void AFBaseCallExpansions()
 {
@@ -18,5 +18,5 @@ void AFBaseCallExpansions()
 	AF2Fun_Call(); // adminfuckery 2 fun commands
 	AF2Menu_Call(); // adminfuckery 2 menu system
         Hats_Call();
-        HookMod_Call();
+//        HookMod_Call();
 }
