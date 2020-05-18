@@ -38,3 +38,4 @@ STATIC hats/tweedle
 STATIC hats/ushanka
 STATIC hats/viking
 STATIC hats/wehrmacht
+STATIC twlz/hats/autism

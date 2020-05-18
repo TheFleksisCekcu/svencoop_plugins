@@ -3,6 +3,7 @@
 const string g_FromSven = "scripts/plugins/store/_fromsven.txt";
 const string g_ToSven   = "scripts/plugins/store/_tosven.txt";
 const float delay       = 1.75f; // flush this often (sec.), don't set too low
+const float unlockAfter = 20.0f;
 //////////
 
 File@ f_FromSven;
@@ -40,7 +41,7 @@ void MapStart() {
     @sf_LinkChat = g_Scheduler.SetInterval( "ChatLink", delay );
 
   g_Scheduler.SetTimeout( "ServerStatus", delay * 3 );
-  g_Scheduler.SetTimeout( "Unlock", 5.0f );
+  g_Scheduler.SetTimeout( "Unlock", unlockAfter );
 }
 
 void Unlock() {
@@ -141,11 +142,11 @@ HookReturnCode ClientPutInServer( CBasePlayer@ pPlayer ) {
 
   ips[steamId] = string( ips[pPlayer.pev.netname] );
 
-  if ( ips.exists( pPlayer.pev.netname ) ) {
+  if ( ips.exists( pPlayer.pev.netname ) )
     ips.delete( pPlayer.pev.netname );
-  }
 
-  AppendFromSven( "+ <" + pPlayer.pev.netname + "><" + string(ips[steamId]) + "><" + steamId + "> has joined the game\n" );
+  if ( !lock )
+     AppendFromSven( "+ <" + pPlayer.pev.netname + "><" + string(ips[steamId]) + "><" + steamId + "> has joined the game\n" );
 
   return HOOK_CONTINUE;
 }
