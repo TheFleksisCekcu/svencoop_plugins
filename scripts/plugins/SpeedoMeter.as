@@ -12,7 +12,7 @@ void PluginInit() {
   if(g_pSpeedThinkFunc !is null)
     g_Scheduler.RemoveTimer(g_pSpeedThinkFunc);
 
-  @g_pSpeedThinkFunc = g_Scheduler.SetInterval("speedThink", 0.1f);
+  @g_pSpeedThinkFunc = g_Scheduler.SetInterval("speedThink", 0.25f);
 }
 
 class PlayerSpeedData {

@@ -3,12 +3,13 @@
 const string g_FromSven = "scripts/plugins/store/_fromsven.txt";
 const string g_ToSven   = "scripts/plugins/store/_tosven.txt";
 const float delay       = 1.75f; // flush this often (sec.), don't set too low
-const float unlockAfter = 20.0f;
+const float unlockAfter = 22.2f;
 //////////
 
 File@ f_FromSven;
 File@ f_ToSven;
 CScheduledFunction@ sf_LinkChat = null;
+CScheduledFunction@ sf_Unlock   = null;
 bool lock = true;
 int oldCount = 0;
 dictionary ips;
@@ -38,10 +39,10 @@ void MapStart() {
   TruncateFromSven();
 
   if ( sf_LinkChat is null )
-    @sf_LinkChat = g_Scheduler.SetInterval( "ChatLink", delay );
+    @sf_LinkChat = g_Scheduler.SetInterval( "ChatLink", delay, g_Scheduler.REPEAT_INFINITE_TIMES );
 
   g_Scheduler.SetTimeout( "ServerStatus", delay * 3 );
-  g_Scheduler.SetTimeout( "Unlock", unlockAfter );
+  @sf_Unlock = g_Scheduler.SetTimeout( "Unlock", unlockAfter );
 }
 
 void Unlock() {
@@ -117,6 +118,8 @@ void AppendFromSven( string append ) {
 
 HookReturnCode MapChange() {
   oldCount = g_PlayerFuncs.GetNumPlayers();
+  g_Scheduler.RemoveTimer(sf_Unlock);
+  @sf_Unlock = null;
   lock = true;
 
   return HOOK_CONTINUE;
