@@ -16,7 +16,7 @@ class AF2Menu : AFBaseClass
 	
 	void ExpansionInit()
 	{
-		RegisterCommand("afb_menu", "", "- pop open a simple command menu", ACCESS_H, @AF2Menu::popmenu, true);
+		RegisterCommand("afb_menu", "", "- pop open a simple command menu", ACCESS_H, @AF2Menu::popmenu, CMD_PRECACHE);
 		AF2Menu::initializeMenus();
 	}
 	

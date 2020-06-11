@@ -12,7 +12,7 @@ void PluginInit() {
   if(g_pSpeedThinkFunc !is null)
     g_Scheduler.RemoveTimer(g_pSpeedThinkFunc);
 
-  @g_pSpeedThinkFunc = g_Scheduler.SetInterval("speedThink", 0.25f);
+  @g_pSpeedThinkFunc = g_Scheduler.SetInterval("speedThink", 0.1f);
 }
 
 class PlayerSpeedData {
@@ -83,7 +83,7 @@ void speedMsg(CBasePlayer@ pPlayer, const string szSteamId) {
 
   // Calculate different speeds  
   speedh = sqrt( pow( velocity.x, 2.0 ) + pow( velocity.y, 2.0 ) );
-  realSpeedH = sqrt( pow( origin.x - data.lastOrigin.x, 2.0 ) + pow( origin.y - data.lastOrigin.y, 2.0 ) ) / ( currentTime - data.lastTime );
+  //realSpeedH = sqrt( pow( origin.x - data.lastOrigin.x, 2.0 ) + pow( origin.y - data.lastOrigin.y, 2.0 ) ) / ( currentTime - data.lastTime );
   
   // Store current values as old values
   data.lastOrigin = origin;

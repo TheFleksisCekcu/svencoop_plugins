@@ -28,19 +28,22 @@ HookReturnCode ClientPutInServer( CBasePlayer@ pPlayer ) {
 }
 
 void MapInit() {
+  array<string> precachedModels;
+
   for ( uint i = 0; i < g_ModelList.length(); i++ ) {
-    File@ pFile = g_FileSystem.OpenFile( "scripts/plugins/store/playermodelfolder/" + g_ModelList[i] + "/" + g_ModelList[i] + ".mdl", OpenFile::READ );
-
-    if ( pFile !is null && pFile.IsOpen() ) {
-      pFile.Close();
-      g_Game.PrecacheGeneric( "models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + ".mdl" );
-    }
-
     File@ pFileT = g_FileSystem.OpenFile( "scripts/plugins/store/playermodelfolder/" + g_ModelList[i] + "/" + g_ModelList[i] + "t.mdl", OpenFile::READ );
 
     if ( pFileT !is null && pFileT.IsOpen() ) {
       pFileT.Close();
       g_Game.PrecacheGeneric( "models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + "t.mdl" );
+    }
+
+    File@ pFile = g_FileSystem.OpenFile( "scripts/plugins/store/playermodelfolder/" + g_ModelList[i] + "/" + g_ModelList[i] + ".mdl", OpenFile::READ );
+
+    if ( pFile !is null && pFile.IsOpen() ) {
+      pFile.Close();
+      g_Game.PrecacheModel( "models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + ".mdl" );
+      precachedModels.insertLast(g_ModelList[i]);
     }
 
     File@ pFileP = g_FileSystem.OpenFile( "scripts/plugins/store/playermodelfolder/" + g_ModelList[i] + "/" + g_ModelList[i] + ".bmp", OpenFile::READ );
@@ -50,6 +53,14 @@ void MapInit() {
       g_Game.PrecacheGeneric( "models/player/" + g_ModelList[i] + "/" + g_ModelList[i] + ".bmp" );
     }
   }
+
+  // share the list of precached models with other plugins
+  dictionary keys;
+  keys["targetname"] = "PlayerModelPrecacheDyn";
+  for (uint i = 0; i < precachedModels.size(); i++) {
+    keys["$s_model" + i] = precachedModels[i];
+  }
+  g_EntityFuncs.CreateEntity("info_target", keys, true);
 
   g_ModelList.resize( 0 );
 }
