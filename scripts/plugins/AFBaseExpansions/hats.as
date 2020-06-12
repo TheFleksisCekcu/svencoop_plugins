@@ -17,7 +17,7 @@ class Hats : AFBaseClass
 	void ExpansionInit()
 	{
 		RegisterCommand("say hat", "s", "(hatname/menu/off) - set hat, show menu or take hat off.", ACCESS_Z, @Hats::hat, CMD_PRECACHE | CMD_SUPRESS); // always supress, uses workaround for now
-		RegisterCommand("hat_force", "ss", "(target(s)) (hatname/off) - force hat.. or take it away!", ACCESS_U, @Hats::forcehat, CMD_PRECACHE);
+		RegisterCommand("hat_force", "ss", "(target(s)) (hatname/off) - force hat.. or take it away!", ACCESS_U, @Hats::forcehat, true);
 		g_Hooks.RegisterHook(Hooks::Player::PlayerSpawn, @Hats::PlayerSpawn);
 		@Hats::g_cvarSuppressChat = CCVar("hats_suppresschat", 0, "0/1 Suppress player chat when using plugin.", ConCommandFlag::AdminOnly);
 		@Hats::g_cvarSuppressInfo = CCVar("hats_suppressinfo", 0, "0/1 Suppress info chat from plugin.", ConCommandFlag::AdminOnly);

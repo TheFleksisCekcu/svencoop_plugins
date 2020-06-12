@@ -1,6 +1,8 @@
 
 void print(string text) { g_Game.AlertMessage( at_console, text); }
 void println(string text) { print(text + "\n"); }
+void conPrint(CBasePlayer@ plr, string text) { g_PlayerFuncs.ClientPrint(plr, HUD_PRINTCONSOLE, text); }
+void conPrintln(CBasePlayer@ plr, string text) { g_PlayerFuncs.ClientPrint(plr, HUD_PRINTCONSOLE, text + "\n"); }
 
 class Color
 { 
@@ -30,10 +32,62 @@ PlayerState@ getPlayerState(CBasePlayer@ plr)
 	if ( !g_player_states.exists(steamId) )
 	{
 		PlayerState state;
-		state.plr = plr;
+		state.h_plr = plr;
 		g_player_states[steamId] = state;
 	}
 	return cast<PlayerState@>( g_player_states[steamId] );
+}
+
+void debug_plr(CBasePlayer@ plr, EHandle h_plr) {
+	CBasePlayer@ statePlr = cast<CBasePlayer@>(h_plr.GetEntity());
+	conPrintln(plr, "    plr: " + (h_plr.IsValid() ? string(statePlr.pev.netname) + 
+									(statePlr.IsConnected() ? ", connected" : ", disconnected") + 
+									", " + statePlr.entindex() : "null"));
+}
+
+string getPlayerUniqueId(CBasePlayer@ plr)
+{
+	string steamId = g_EngineFuncs.GetPlayerAuthId( plr.edict() );
+	if (steamId == 'STEAM_ID_LAN' or steamId == 'STEAM_ID_BOT' or steamId == 'BOT') {
+		steamId = plr.pev.netname;
+	}
+	return steamId;
+}
+
+// get player by name, partial name, or steamId
+CBasePlayer@ getPlayer(CBasePlayer@ caller, string name)
+{
+	name = name.ToLowercase();
+	int partialMatches = 0;
+	CBasePlayer@ partialMatch;
+	CBaseEntity@ ent = null;
+	do {
+		@ent = g_EntityFuncs.FindEntityByClassname(ent, "player");
+		if (ent !is null) {
+			CBasePlayer@ plr = cast<CBasePlayer@>(ent);
+			string plrName = string(plr.pev.netname).ToLowercase();
+			string plrId = getPlayerUniqueId(plr).ToLowercase();
+			if (plrName == name)
+				return plr;
+			else if (plrId == name)
+				return plr;
+			else if (plrName.Find(name) != uint(-1))
+			{
+				@partialMatch = plr;
+				partialMatches++;
+			}
+		}
+	} while (ent !is null);
+	
+	if (partialMatches == 1) {
+		return partialMatch;
+	} else if (partialMatches > 1) {
+		g_PlayerFuncs.SayText(caller, 'There are ' + partialMatches + ' players that have "' + name + '" in their name. Be more specific.');
+	} else {
+		g_PlayerFuncs.SayText(caller, 'There is no player named "' + name + '"');
+	}
+	
+	return null;
 }
 
 void populatePlayerStates()
@@ -52,6 +106,39 @@ void populatePlayerStates()
 float AngleDifference( float angle2, float angle1 ) {
     float diff = int( angle2 - angle1 + 180 ) % 360 - 180;
     return diff < -180 ? diff + 360 : diff;
+}
+
+Vector VecBModelOrigin( entvars_t@ pevBModel )
+{
+	return pevBModel.absmin + ( pevBModel.size * 0.5 );
+}
+
+Vector UTIL_ClampVectorToBox( Vector input, Vector clampSize )
+{
+	Vector sourceVector = input;
+
+	if ( sourceVector.x > clampSize.x )
+		sourceVector.x -= clampSize.x;
+	else if ( sourceVector.x < -clampSize.x )
+		sourceVector.x += clampSize.x;
+	else
+		sourceVector.x = 0;
+
+	if ( sourceVector.y > clampSize.y )
+		sourceVector.y -= clampSize.y;
+	else if ( sourceVector.y < -clampSize.y )
+		sourceVector.y += clampSize.y;
+	else
+		sourceVector.y = 0;
+	
+	if ( sourceVector.z > clampSize.z )
+		sourceVector.z -= clampSize.z;
+	else if ( sourceVector.z < -clampSize.z )
+		sourceVector.z += clampSize.z;
+	else
+		sourceVector.z = 0;
+
+	return sourceVector.Normalize();
 }
 
 void te_smoke(Vector pos, string sprite="sprites/steam1.spr", 
