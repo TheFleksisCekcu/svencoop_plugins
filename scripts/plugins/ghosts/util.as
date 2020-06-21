@@ -18,6 +18,23 @@ const Color RED(255,0,0);
 const Color GREEN(0,255,0);
 const Color BLUE(0,0,255);
 
+// gets currently connected players and their states
+array<PlayerWithState@> getPlayersWithState() {
+	array<PlayerWithState@> playersWithState;
+	
+	for ( int i = 1; i <= g_Engine.maxClients; i++ )
+	{
+		CBasePlayer@ p = g_PlayerFuncs.FindPlayerByIndex(i);
+		if (p is null or !p.IsConnected())
+			continue;
+		
+		playersWithState.insertLast(PlayerWithState(p, getPlayerState(p)));
+	}
+	
+	return playersWithState;
+}
+
+
 // Will create a new state if the requested one does not exit
 PlayerState@ getPlayerState(CBasePlayer@ plr)
 {
@@ -32,7 +49,6 @@ PlayerState@ getPlayerState(CBasePlayer@ plr)
 	if ( !g_player_states.exists(steamId) )
 	{
 		PlayerState state;
-		state.h_plr = plr;
 		g_player_states[steamId] = state;
 	}
 	return cast<PlayerState@>( g_player_states[steamId] );
@@ -43,6 +59,19 @@ void debug_plr(CBasePlayer@ plr, EHandle h_plr) {
 	conPrintln(plr, "    plr: " + (h_plr.IsValid() ? string(statePlr.pev.netname) + 
 									(statePlr.IsConnected() ? ", connected" : ", disconnected") + 
 									", " + statePlr.entindex() : "null"));
+}
+
+void PrintKeyBindingString(EHandle h_plr, string text) {
+	CBasePlayer@ plr = cast<CBasePlayer@>(h_plr.GetEntity());
+	if (plr !is null && plr.IsConnected())
+		g_PlayerFuncs.PrintKeyBindingString(plr, text);
+}
+
+// display the text for a second longer
+void PrintKeyBindingStringLong(CBasePlayer@ plr, string text)
+{
+	PrintKeyBindingString(EHandle(plr), text);
+	g_Scheduler.SetTimeout("PrintKeyBindingString", 1, EHandle(plr), text);
 }
 
 string getPlayerUniqueId(CBasePlayer@ plr)
@@ -101,6 +130,12 @@ void populatePlayerStates()
 			getPlayerState(plr);
 		}
 	} while (ent !is null);
+}
+
+string format_float(float f)
+{
+	uint decimal = uint(((f - int(f)) * 10)) % 10;
+	return "" + int(f) + "." + decimal;
 }
 
 float AngleDifference( float angle2, float angle1 ) {

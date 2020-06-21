@@ -19,6 +19,7 @@ void CheckPlayerSinking(){
 					pEntity.pev.velocity = Vector(0,0,0);
 					pEntity.pev.movetype = 8;
 				}
+         pEntity.pev.solid = SOLID_NOT;
 			}
 			else if( pEntity.GetClassname() == "player" && pEntity.IsAlive() &&  pEntity.pev.health > 10001) {
 				g_EntityFuncs.Remove( pEntity );

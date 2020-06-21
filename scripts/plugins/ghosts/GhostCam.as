@@ -1,7 +1,3 @@
-float g_renderamt = 96;
-float g_min_zoom = 0;
-float g_max_zoom = 1024;
-float g_default_zoom = 96;
 
 class GhostCam
 {
@@ -23,6 +19,11 @@ class GhostCam
 	bool showCameraHelp = true;
 	bool showCameraCtrlHelp = true;
 	bool showThirdPersonHelp = true;
+	string currentPlayerModel;
+	int freeRoamCount = 0; // use to detect if ghost is free roaming (since there's no method to check mode)
+	
+	float collectTimeout = 0;
+	EHandle collectTarget;
 	
 	GhostCam() {}
 	
@@ -33,15 +34,15 @@ class GhostCam
 	void init(CBasePlayer@ plr) {
 		h_plr = plr;
 		
-		isPlayerModel = g_use_player_models;
-		
 		ghostId++;
+		
+		currentPlayerModel = getPlayerModel();
 		
 		dictionary keys;
 		keys["origin"] = plr.pev.origin.ToString();
-		keys["model"] = isPlayerModel ? getPlayerModel() : g_camera_model;
+		keys["model"] = currentPlayerModel;
 		keys["targetname"] = g_ent_prefix + ghostId;
-		keys["noise"] = getPlayerUniqueId(plr); // used by the emotes plugin to find this ent
+		keys["noise3"] = getPlayerUniqueId(plr); // set an id on the ent for internal use only
 		keys["rendermode"] = "1";
 		keys["renderamt"] = "" + g_renderamt;
 		keys["spawnflags"] = "1";
@@ -49,8 +50,14 @@ class GhostCam
 		ghostCam.pev.solid = SOLID_NOT;
 		ghostCam.pev.movetype = MOVETYPE_NOCLIP;
 		ghostCam.pev.takedamage = 0;
+		ghostCam.pev.sequence = 0;
 		ghostCam.pev.angles = plr.pev.v_angle;
 		h_cam = ghostCam;
+
+		isPlayerModel = string(ghostCam.pev.model) != g_camera_model;
+		if (isPlayerModel) {
+			ghostCam.pev.noise = getPlayerUniqueId(plr); // used by the emotes plugin to find this ent
+		}
 
 		dictionary rkeys;
 		rkeys["target"] = string(ghostCam.pev.targetname);
@@ -71,7 +78,7 @@ class GhostCam
 		createCameraHat();
 		
 		if (showThirdPersonHelp) {
-			g_PlayerFuncs.PrintKeyBindingString(plr, "+alt1 to toggle third-person\n+USE to spray");
+			PrintKeyBindingStringLong(plr, "+alt1 to toggle third-person\n+USE to spray");
 			showThirdPersonHelp = false;
 		}
 		
@@ -95,7 +102,7 @@ class GhostCam
 			hideGhostCam.Use(plr, plr, USE_OFF);
 			
 			if (showCameraHelp) {
-				g_PlayerFuncs.PrintKeyBindingString(plr, "Hold +DUCK to adjust camera");
+				PrintKeyBindingStringLong(plr, "Hold +DUCK to adjust camera");
 				showCameraHelp = false;
 			}
 			
@@ -123,9 +130,10 @@ class GhostCam
 	}
 	
 	string getPlayerModel() {
-		CBaseEntity@ plr = h_plr;
-		if (plr is null)
-			return "models/player.mdl";
+		CBasePlayer@ plr = cast<CBasePlayer@>(h_plr.GetEntity());
+		
+		if (plr is null or !getPlayerState(plr).enablePlayerModel)
+			return g_camera_model;
 	
 		KeyValueBuffer@ p_PlayerInfo = g_EngineFuncs.GetInfoKeyBuffer( plr.edict() );
 		string playerModel = p_PlayerInfo.GetValue( "model" ).ToLowercase();
@@ -134,7 +142,7 @@ class GhostCam
 			return "models/player/" + playerModel + "/" + playerModel + ".mdl";
 		}
 		
-		return "models/player.mdl";
+		return g_camera_model;
 	}
 	
 	// custom keyvalues cause crashes, so this just searches for any model attached to the plater which is most likely a hat.
@@ -190,7 +198,7 @@ class GhostCam
 		h_hat = camHat;
 	}
 	
-	void updateVisibility() {
+	void updateVisibility(array<PlayerWithState@> playersWithStates) {
 		if (!isValid()) {
 			return;
 		}
@@ -198,16 +206,15 @@ class GhostCam
 		CBaseEntity@ plr = h_plr;
 		CBaseEntity@ hideGhostCam = h_render_off;
 		
-		array<string>@ stateKeys = g_player_states.getKeys();
-		for (uint i = 0; i < stateKeys.length(); i++)
+		for (uint i = 0; i < playersWithStates.length(); i++)
 		{
-			PlayerState@ state = cast<PlayerState@>( g_player_states[stateKeys[i]] );
-			CBasePlayer@ statePlr = cast<CBasePlayer@>(state.h_plr.GetEntity());
+			CBasePlayer@ statePlr = playersWithStates[i].plr;
+			PlayerState@ state = playersWithStates[i].state;
 			
-			if (statePlr is null or statePlr.entindex() == plr.entindex())
+			if (statePlr.entindex() == plr.entindex())
 				continue;
 
-			if (state.shouldSeeGhosts()) {
+			if (state.shouldSeeGhosts(statePlr)) {
 				hideGhostCam.Use(statePlr, statePlr, USE_OFF);
 			} else {
 				hideGhostCam.Use(statePlr, statePlr, USE_ON);
@@ -224,12 +231,19 @@ class GhostCam
 			return;
 		}
 		
-		isPlayerModel = g_use_player_models;
+		CBasePlayer@ plr = cast<CBasePlayer@>(h_plr.GetEntity());
 		CBaseEntity@ cam = h_cam;
 		
+		currentPlayerModel = getPlayerModel();
 		g_EntityFuncs.Remove(h_hat);
-		g_EntityFuncs.SetModel(cam, g_use_player_models ? getPlayerModel() : g_camera_model);
+		g_EntityFuncs.SetModel(cam, g_use_player_models ? currentPlayerModel : g_camera_model);
 		createCameraHat();
+		
+		isPlayerModel = string(cam.pev.model) != g_camera_model;
+		cam.pev.noise = isPlayerModel ? getPlayerUniqueId(plr) : "";
+		if (!isPlayerModel) {
+			cam.pev.sequence = 0;
+		}
 	}
 	
 	void toggleFlashlight() {
@@ -262,7 +276,7 @@ class GhostCam
 		
 	}
 	
-	void shoot() {
+	void shoot(bool medic) {
 		if (!isValid()) {
 			return;
 		}
@@ -272,21 +286,24 @@ class GhostCam
 		Math.MakeVectors( plr.pev.v_angle );
 		Vector lookDir = g_Engine.v_forward;
 		
-		te_projectile(plr.pev.origin, lookDir*512, null, "sprites/saveme.spr", 1);
-		//te_projectile(plr.pev.origin, lookDir*512, null, "sprites/saveme.spr", 1);
-		//te_projectile(plr.pev.origin, lookDir*512, null, "sprites/grenade.spr", 1);
-		
-		g_SoundSystem.PlaySound( plr.edict(), CHAN_STATIC, "fgrunt/medic.wav", 0.1f, 0.1f, plr.entindex(), 90);
-		
-		/*
-		TraceResult tr;
-		g_Utility.TraceLine( plr.pev.origin, plr.pev.origin + lookDir*4096, dont_ignore_monsters, cam.edict(), tr );
-		if (tr.flFraction < 1.0f) {
-			g_Utility.Sparks(tr.vecEndPos);
+		array<PlayerWithState@> playersWithStates = getPlayersWithState();
+		for (uint i = 0; i < playersWithStates.length(); i++)
+		{
+			CBasePlayer@ statePlr = playersWithStates[i].plr;
+			PlayerState@ dstate = playersWithStates[i].state;
 			
+			if (!dstate.shouldSeeGhosts(statePlr)) {
+				continue;
+			}
+			
+			if (medic) {
+				te_projectile(plr.pev.origin + Vector(0,0, -12), lookDir*512, null, "sprites/saveme.spr", 1,  MSG_ONE_UNRELIABLE, statePlr.edict());
+				g_SoundSystem.PlaySound( plr.edict(), CHAN_STATIC, "speech/saveme1.wav", 0.1f, 1.0f, 0, 100, statePlr.entindex());
+			} else {
+				te_projectile(plr.pev.origin + Vector(0,0, -12), lookDir*512, null, "sprites/grenade.spr", 1,  MSG_ONE_UNRELIABLE, statePlr.edict());
+				g_SoundSystem.PlaySound( plr.edict(), CHAN_STATIC, "speech/grenade1.wav", 0.1f, 1.0f, 0, 100, statePlr.entindex());
+			}
 		}
-		te_tracer(plr.pev.origin + Vector(0,0,-8), tr.vecEndPos);
-		*/
 	}
 	
 	bool isValid() {
@@ -309,12 +326,14 @@ class GhostCam
 		if (h_cam.IsValid()) {
 			CBaseEntity@ cam = h_cam;
 			
-			array<string>@ stateKeys = g_player_states.getKeys();
-			for (uint i = 0; i < stateKeys.length(); i++)
+			array<PlayerWithState@> playersWithStates = getPlayersWithState();
+			for (uint i = 0; i < playersWithStates.length(); i++)
 			{
-				PlayerState@ state = cast<PlayerState@>( g_player_states[stateKeys[i]] );
-				CBaseEntity@ plr = state.h_plr;
-				if (plr !is null && state.shouldSeeGhosts()) {
+				CBasePlayer@ plr = playersWithStates[i].plr;
+				PlayerState@ state = playersWithStates[i].state;
+				
+				// poof effect
+				if (state.shouldSeeGhosts(plr)) {
 					int scale = isPlayerModel ? 10 : 4;
 					te_smoke(cam.pev.origin - Vector(0,0,24), "sprites/steam1.spr", scale, 40, MSG_ONE_UNRELIABLE, plr.edict());
 					g_SoundSystem.PlaySound( cam.edict(), CHAN_STATIC, "player/pl_organic2.wav", 0.8f, 1.0f, 0, 50, plr.entindex());
@@ -353,6 +372,30 @@ class GhostCam
 			// it's needed to re-create the hat after doing "hat off" + "hat afro"
 		}
 		
+		// detect if player is in roaming mode
+		CBaseEntity@ oberverTarget = plr.GetObserver().GetObserverTarget();
+		if (oberverTarget !is null) {
+			bool freeRoam = oberverTarget.pev.velocity.Length() > 1 && lastPlayerOrigin == plr.pev.origin;
+			if (freeRoam) {
+				freeRoamCount++;
+				if (freeRoamCount >= 4) {
+					// clear target to indicate player is free roaming
+					plr.GetObserver().SetObserverTarget(null);
+					freeRoamCount = 0;
+				}
+			} else {
+				freeRoamCount = 0;
+			}		
+		}
+		
+		if (collectTimeout > g_Engine.time ) {
+			CBasePlayer@ target = cast<CBasePlayer@>(collectTarget.GetEntity());
+			if (target !is null) {
+				plr.GetObserver().SetObserverTarget(target);
+				plr.GetObserver().SetMode(OBS_CHASE_FREE);
+			}
+		}
+		
 		Math.MakeVectors( plr.pev.v_angle );
 		Vector playerForward = g_Engine.v_forward;
 		
@@ -363,7 +406,7 @@ class GhostCam
 		}
 		if (isThirdPerson && (plr.pev.button & IN_DUCK) != 0) {
 			if (showCameraCtrlHelp) {
-				g_PlayerFuncs.PrintKeyBindingString(plr, "+FORWARD and +BACK to zoom\n+RELOAD to reset");
+				PrintKeyBindingStringLong(plr, "+FORWARD and +BACK to zoom\n+RELOAD to reset");
 				showCameraCtrlHelp = false;
 			}
 			thirdPersonRot = thirdPersonRot + (plr.pev.v_angle - lastPlayerAngles);
@@ -405,42 +448,37 @@ class GhostCam
 		lastOrigin = cam.pev.origin;
 		
 		// update third-person perspective origin/angles
-		if (thirdPersonTarget !is null) {
-			if (isThirdPerson) {
-				
-				Vector plrAngles = plr.pev.v_angle;
-				
-				// invert camera up/down rotation when camera is in front of the player (hard to control)
-				/*
-				if (thirdPersonRot.y > 90 || thirdPersonRot.y < -90) 
-					plrAngles.x *= -1;
-				*/
-						
-				Math.MakeVectors(plrAngles + thirdPersonRot);
-				
-				Vector offset = (g_Engine.v_forward*96 + g_Engine.v_up*-24).Normalize() * thirdPersonZoom;
-				
-				Vector idealPos = modelTargetPos - offset;
-				
-				TraceResult tr;
-				g_Utility.TraceLine( modelTargetPos, idealPos, ignore_monsters, null, tr );
-				
-				if (tr.fInOpen != 0) {
-					g_EngineFuncs.SetView( plr.edict(), thirdPersonTarget.edict() );
+		if ((isThirdPerson || g_stress_test) && thirdPersonTarget !is null) {			
+			Vector plrAngles = plr.pev.v_angle;
+			
+			// invert camera up/down rotation when camera is in front of the player (hard to control)
+			/*
+			if (thirdPersonRot.y > 90 || thirdPersonRot.y < -90) 
+				plrAngles.x *= -1;
+			*/
 					
-					Vector targetAngles = plrAngles + thirdPersonRot;
-					
-					float rot_x_diff = AngleDifference(targetAngles.x, thirdPersonTarget.pev.angles.x);
-					float rot_y_diff = AngleDifference(targetAngles.y, thirdPersonTarget.pev.angles.y);
-					
-					Vector delta2 = tr.vecEndPos - lastThirdPersonOrigin; 
-					thirdPersonTarget.pev.velocity = delta2*0.05f*100.0f;
-					thirdPersonTarget.pev.avelocity = Vector(rot_x_diff*10, rot_y_diff*10, 0);
-				} else {
-					g_EngineFuncs.SetView( plr.edict(), plr.edict() );
-				}
+			Math.MakeVectors(plrAngles + thirdPersonRot);
+			
+			Vector offset = (g_Engine.v_forward*96 + g_Engine.v_up*-24).Normalize() * thirdPersonZoom;
+			
+			Vector idealPos = modelTargetPos - offset;
+			
+			TraceResult tr;
+			g_Utility.TraceLine( modelTargetPos, idealPos, ignore_monsters, null, tr );
+			
+			if (tr.fInOpen != 0) {
+				g_EngineFuncs.SetView( plr.edict(), thirdPersonTarget.edict() );
+				
+				Vector targetAngles = plrAngles + thirdPersonRot;
+				
+				float rot_x_diff = AngleDifference(targetAngles.x, thirdPersonTarget.pev.angles.x);
+				float rot_y_diff = AngleDifference(targetAngles.y, thirdPersonTarget.pev.angles.y);
+				
+				Vector delta2 = tr.vecEndPos - lastThirdPersonOrigin; 
+				thirdPersonTarget.pev.velocity = delta2*0.05f*100.0f;
+				thirdPersonTarget.pev.avelocity = Vector(rot_x_diff*10, rot_y_diff*10, 0);
 			} else {
-				thirdPersonTarget.pev.origin = plr.pev.origin;
+				g_EngineFuncs.SetView( plr.edict(), plr.edict() );
 			}
 			
 			lastThirdPersonOrigin = thirdPersonTarget.pev.origin;
@@ -449,8 +487,8 @@ class GhostCam
 		cam.pev.colormap = plr.pev.colormap;
 		cam.pev.netname = "Ghost:  " + plr.pev.netname +
 					    "\nCorpse: " + (plr.GetObserver().HasCorpse() ? "Yes" : "No") +
-					    "\nArmor:  " + int(plr.pev.armorvalue) +
-					    "\nScore:    " + int(plr.pev.frags);
+						"\nArmor:  " + int(plr.pev.armorvalue) +
+						"\nMode:   " + getPlayerState(plr).visbilityMode;
 		
 		// reverse angle looks better for the swimming animation (leaning into turns)
 		float torsoAngle = AngleDifference(cam.pev.angles.y, plr.pev.v_angle.y) * (30.0f / 90.0f);
@@ -486,8 +524,26 @@ class GhostCam
 			nextThirdPersonToggle = g_Engine.time + 0.5f;
 			toggleThirdperson();
 		}
-		if (false && (plr.pev.button & IN_ATTACK) != 0) {
-			shoot();
+		if (g_fun_mode && (plr.pev.button & IN_ATTACK) != 0) {
+			shoot(true);
+		}
+		if (g_fun_mode && (plr.pev.button & IN_ATTACK2) != 0) {
+			shoot(false);
+		}
+		if (g_fun_mode && (plr.pev.button & IN_ATTACK2) != 0) {
+			shoot(false);
+		}
+		
+		string newModel = getPlayerModel();
+		if (newModel != currentPlayerModel) {
+			updateModel();
+		}
+		
+		if (g_stress_test) {
+			plr.pev.v_angle = plr.pev.v_angle;
+			plr.pev.v_angle.y += Math.RandomLong(0, 10);
+			plr.pev.v_angle.x += Math.RandomLong(0, 10);
+			plr.pev.fixangle = FAM_FORCEVIEWANGLES;
 		}
 	}
 }

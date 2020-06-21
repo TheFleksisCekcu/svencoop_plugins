@@ -39,3 +39,5 @@ STATIC hats/ushanka
 STATIC hats/viking
 STATIC hats/wehrmacht
 STATIC twlz/hats/autism
+STATIC twlz/hats/beret
+STATIC twlz/hats/chef

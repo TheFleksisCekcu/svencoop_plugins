@@ -3,7 +3,7 @@
 const string g_FromSven = "scripts/plugins/store/_fromsven.txt";
 const string g_ToSven   = "scripts/plugins/store/_tosven.txt";
 const float delay       = 1.75f; // flush this often (sec.), don't set too low
-const float unlockAfter = 22.2f;
+const float unlockAfter = 20.0f;
 //////////
 
 File@ f_FromSven;

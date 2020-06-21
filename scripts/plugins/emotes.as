@@ -460,9 +460,7 @@ CBaseMonster@ getGhostEnt(CBasePlayer@ plr) {
 		@ent = g_EntityFuncs.FindEntityByClassname(ent, "cycler"); 
 		if (ent !is null)
 		{
-			println("FOUND " + string(ent.pev.noise));
 			if (string(ent.pev.noise) == id) {
-				println("ZOMG FOUND ID");
 				return cast<CBaseMonster@>(ent);
 			}
 		}
@@ -542,6 +540,9 @@ void doEmoteCommand(CBasePlayer@ plr, const CCommand@ args, bool inConsole)
 			float framerate = args.ArgC() >= 4 ? atof(args[3]) : 1.0f;
 			float startFrame = (framerate >= 0 ? 0.0001f : 254.9999f);
 			float endFrame = (framerate >= 0 ? 254.9999f : 0.0001f);
+			if (seq > 255) {
+				seq = 255;
+			}
 			
 			startFrame = args.ArgC() >= 5 ? atof(args[4]) : startFrame;
 			endFrame = args.ArgC() >= 6 ? atof(args[5]) : endFrame;
