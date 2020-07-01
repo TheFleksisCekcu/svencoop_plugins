@@ -130,7 +130,7 @@ HookReturnCode ClientSay(SayParameters@ pParams) {
         if ( pArguments.ArgC() == 1 )
           pParams.ShouldHide = true;
 
-        return HOOK_HANDLED;
+        return pArguments.ArgC() == 1 ? HOOK_HANDLED : HOOK_CONTINUE;
       }
       else {
         if (soundArg == 'medic' || soundArg == 'meedic') {

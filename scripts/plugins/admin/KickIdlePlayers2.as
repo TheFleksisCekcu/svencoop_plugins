@@ -172,6 +172,9 @@ void idletestfunc(){
 	if(m_sMap == "th_ep1_00") return;
 	if(m_sMap == "dy_outro") return;
 	if(m_sMap == "botparty") return;
+	if(m_sMap == "rust_legacy_b9") return;
+	if(m_sMap == "rust_islands_b9") return;
+	if(m_sMap == "rust_mini_b9") return;
 	
   int plyCnt = 0;
   int g_maxplayersAFK = 27;

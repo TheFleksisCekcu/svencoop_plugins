@@ -23,14 +23,14 @@ void ManualMapChange(const CCommand@ args) {
   }
 }
 
-void MapChange(const string map, const string pName) {
-  g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "[MapChange] Admin " + pName + " changed map to: " + map + "\n");
+void MapChange(string map, const string pName) {
+  g_PlayerFuncs.ClientPrintAll(HUD_PRINTTALK, "[MapChange] Admin " + pName + " changed map to: " + map.ToLowercase() + "\n");
   NetworkMessage message(MSG_ALL, NetworkMessages::SVC_INTERMISSION, null);
   message.End();
-  g_Scheduler.SetTimeout("ChangeLevelCmd", 5.0f, map);
+  g_Scheduler.SetTimeout("ChangeLevelCmd", 5.0f, map.ToLowercase());
 }
 
-void ChangeLevelCmd(const string map) {
-  g_EngineFuncs.ChangeLevel(map);
-  //g_EngineFuncs.ServerCommand("changelevel " + map + "\n");
+void ChangeLevelCmd(string map) {
+  g_EngineFuncs.ChangeLevel(map.ToLowercase());
+  //g_EngineFuncs.ServerCommand("changelevel " + map.ToLowercase() + "\n");
 }

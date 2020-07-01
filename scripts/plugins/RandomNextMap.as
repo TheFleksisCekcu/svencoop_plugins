@@ -195,7 +195,7 @@ void SetNextMap(const CCommand@ args) {
     }
     
     // Check map
-    const string mapName = args[1];
+    const string mapName = args[1].ToLowercase();
     if (mapName == "") {
         g_PlayerFuncs.ClientPrint(client, HUD_PRINTCONSOLE, PLUGIN_TAG + ".set_nextmap <mapname>\n");
         return;
